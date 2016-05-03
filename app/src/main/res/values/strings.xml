@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">statistics</string>
+    <string name="client_event">模拟事件触发</string>
+
+</resources>
