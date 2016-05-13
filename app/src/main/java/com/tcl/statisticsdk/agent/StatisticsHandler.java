@@ -33,7 +33,7 @@ import com.tcl.statisticsdk.util.NetUtils;
 public class StatisticsHandler {
     private static StatisticsHandler mInstance = new StatisticsHandler();
     private static Context mContext;
-    private HandlerThread mHandlerThread ;
+    private HandlerThread mHandlerThread;
     private Handler mHandler;
 
     private String mCurrentPage = "";
@@ -64,7 +64,7 @@ public class StatisticsHandler {
     public static String mExceptionMessage = null;
     public static String mExcetpionCause = null;
 
-    private static final int DATA_MAX_SIZE = 300*1024;
+    private static final int DATA_MAX_SIZE = 300 * 1024;
 
     private boolean isSendLog = false;
     private boolean isResume = false;
@@ -78,11 +78,9 @@ public class StatisticsHandler {
     }
 
     private void startThread() {
-        mHandlerThread = new HandlerThread("statisticHandler",
-                Process.THREAD_PRIORITY_BACKGROUND);
+        mHandlerThread = new HandlerThread("statisticHandler", Process.THREAD_PRIORITY_BACKGROUND);
         mHandlerThread.start();
-        mHandler = new Handler(mHandlerThread.getLooper(),
-                new HandlerCallBack());
+        mHandler = new Handler(mHandlerThread.getLooper(), new HandlerCallBack());
     }
 
 
@@ -138,7 +136,7 @@ public class StatisticsHandler {
 
     }
 
-    //判断子线程是否死掉
+    // 判断子线程是否死掉
     private void checkThreadAlive() {
         if (mHandlerThread == null || !mHandlerThread.isAlive()) {
             startThread();
@@ -164,7 +162,7 @@ public class StatisticsHandler {
      * @param context
      */
     private static void catchException(Context context) {
-        if(context!=null){
+        if (context != null) {
             mContext = context.getApplicationContext();
             // 初始化异常记录器
             CrashHandler crashHandler = CrashHandler.getInstance();
@@ -179,24 +177,23 @@ public class StatisticsHandler {
      */
     private void onPageStart(String pageName) {
         LogUtils.W("进入自定义页面:" + pageName);
-        if(mStatisticsResult == null){
+        if (mStatisticsResult == null) {
             LogUtils.W("未执行onResume而执行onPageStart错误");
             return;
         }
 
-        if(mContext == null){
+        if (mContext == null) {
             LogUtils.W("进入onPageStart，context 为null:");
             return;
         }
 
-        if(convertStatisticResultToJson(mStatisticsResult).length()>DATA_MAX_SIZE){
-            //大于数据最大值，则将数据存储为昨天文件，并创建新文件存储之后的数据
+        if (convertStatisticResultToJson(mStatisticsResult).length() > DATA_MAX_SIZE) {
+            // 大于数据最大值，则将数据存储为昨天文件，并创建新文件存储之后的数据
             LogUtils.E("data is full");
-            //执行当前Activity的onResume操作，保存浏览时间
+            // 执行当前Activity的onResume操作，保存浏览时间
             for (int i = mPageInfos.size() - 1; i >= 0; i--) {
                 PageInfo pageTimeCalculateTool = mPageInfos.get(i);
-                if (mCurrentClassName.equals(pageTimeCalculateTool
-                        .getPageName())) {
+                if (mCurrentClassName.equals(pageTimeCalculateTool.getPageName())) {
                     if (pageTimeCalculateTool != null) {
                         pageTimeCalculateTool.onPause();
                     }
@@ -210,7 +207,7 @@ public class StatisticsHandler {
 
 
         if (mStatisticsResult == null) {
-            mStatisticsResult = new StatisticsResult(mNoParamEvents,mHasParamEvents,System.currentTimeMillis());
+            mStatisticsResult = new StatisticsResult(mNoParamEvents, mHasParamEvents, System.currentTimeMillis());
 
             initNewStatisticsItem();
             // 增加新的统计
@@ -240,12 +237,12 @@ public class StatisticsHandler {
      */
     private void onPageEnd(String pageName) {
         LogUtils.W("离开自定义页面:" + pageName);
-        if(mStatisticsResult == null){
+        if (mStatisticsResult == null) {
             LogUtils.E("执行onPageEnd时，未创建统计信息出错");
             return;
         }
 
-        if(TextUtils.isEmpty(mCurrentPage)){
+        if (TextUtils.isEmpty(mCurrentPage)) {
             LogUtils.D("当前页面未先执行onPageStart()，却执行了onPageEnd()");
             return;
         }
@@ -277,17 +274,17 @@ public class StatisticsHandler {
      */
     private void onEvent(Object obj) {
         EventItem event = (EventItem) obj;
-        if(event.getEventParamMap()!=null){
+        if (event.getEventParamMap() != null) {
             mHasParamEvents.add(event);
-        }else{
+        } else {
             mNoParamEvents.add(event);
-//			EventItem eventItem = mNoParamEvents.get(event.getEventName());
-//			if (eventItem != null) {
-//				eventItem.eventHappen();
-//				event = null;
-//			} else {
-//				mNoParamEvents.put(event.getEventName(), event);
-//			}
+            // EventItem eventItem = mNoParamEvents.get(event.getEventName());
+            // if (eventItem != null) {
+            // eventItem.eventHappen();
+            // event = null;
+            // } else {
+            // mNoParamEvents.put(event.getEventName(), event);
+            // }
         }
     }
 
@@ -301,8 +298,8 @@ public class StatisticsHandler {
         String className = getShortClassName(context);
         LogUtils.D("进入页面:" + className);
 
-        if(isResume){
-            LogUtils.E(className+":未执行onPause而直接执行onResume出错");
+        if (isResume) {
+            LogUtils.E(className + ":未执行onPause而直接执行onResume出错");
             return;
         }
 
@@ -314,8 +311,7 @@ public class StatisticsHandler {
 
             mStatisticsResult = fetchStatisticsResult();
             HashMap<Serializable, String> historyLogs = FileSerializableUtils.getInstence().getHistoryLogs(context);
-            if (mStatisticsResult != null
-                    && mStatisticsResult.getStatisticItems().size() != 0) {
+            if (mStatisticsResult != null && mStatisticsResult.getStatisticItems().size() != 0) {
                 mNoParamEvents = mStatisticsResult.getNoParamEvents();
                 mHasParamEvents = mStatisticsResult.getHasParamEvents();
                 LogUtils.D("准备发送今日数据");
@@ -324,15 +320,15 @@ public class StatisticsHandler {
                     deleteTodayCacheFile();
                     mNoParamEvents.clear();
                     mHasParamEvents.clear();
-                    mStatisticsResult = new StatisticsResult(mNoParamEvents,mHasParamEvents,mStartTime);
+                    mStatisticsResult = new StatisticsResult(mNoParamEvents, mHasParamEvents, mStartTime);
                 }
-            }else if(historyLogs == null ||historyLogs.size()==0){ //无历史日志，并且当天日志内容为空，代表首次安装,则发送一个空数据日志
-                mStatisticsResult = new StatisticsResult(mNoParamEvents,mHasParamEvents,mStartTime);
+            } else if (historyLogs == null || historyLogs.size() == 0) { // 无历史日志，并且当天日志内容为空，代表首次安装,则发送一个空数据日志
+                mStatisticsResult = new StatisticsResult(mNoParamEvents, mHasParamEvents, mStartTime);
                 reportResult(mStatisticsResult);
             }
 
-            if(historyLogs != null && historyLogs.size()>0){
-                //发送历史日志
+            if (historyLogs != null && historyLogs.size() > 0) {
+                // 发送历史日志
                 SendHistoryLogHandler.getInstance().sendHistoryLogs(context);
             }
 
@@ -340,15 +336,15 @@ public class StatisticsHandler {
             clearCache();
 
             if (mStatisticsResult == null) {
-                mStatisticsResult = new StatisticsResult(mNoParamEvents,mHasParamEvents,mStartTime);
+                mStatisticsResult = new StatisticsResult(mNoParamEvents, mHasParamEvents, mStartTime);
             }
 
             initNewStatisticsItem();
 
             // 增加新的统计
             mStatisticsResult.getStatisticItems().add(mStatisticsItem);
-        }else if(convertStatisticResultToJson(mStatisticsResult).length()>DATA_MAX_SIZE){
-            //大于数据最大值，则将数据存储为昨天文件，并创建新文件存储之后的数据
+        } else if (convertStatisticResultToJson(mStatisticsResult).length() > DATA_MAX_SIZE) {
+            // 大于数据最大值，则将数据存储为昨天文件，并创建新文件存储之后的数据
             LogUtils.E("data is full");
             saveStatisticsResultToHistoryFile();
             deleteTodayCacheFile();
@@ -356,20 +352,19 @@ public class StatisticsHandler {
         }
 
         if (!className.equals(mCurrentClassName)) {
-            if(mPageInfos.size()==0){//第一个页面的开始时间设置为新Session的开始时间
-                mPageInfos.add(new PageInfo(className,mStartTime));
-            }else{
+            if (mPageInfos.size() == 0) {// 第一个页面的开始时间设置为新Session的开始时间
+                mPageInfos.add(new PageInfo(className, mStartTime));
+            } else {
                 mPageInfos.add(new PageInfo(className));
             }
             mCurrentClassName = className;
-            mCurrentPage = null;//进入另一个Activity了，则应该把最后的自定义页面置位null，
-            //否则在回到刚才的Activity时，里面的自定义页面不会重新计算，而是累加时间，详见
-            //onPageStart逻辑（或判断自定义页面和mCurrentPage是否一致）
+            mCurrentPage = null;// 进入另一个Activity了，则应该把最后的自定义页面置位null，
+            // 否则在回到刚才的Activity时，里面的自定义页面不会重新计算，而是累加时间，详见
+            // onPageStart逻辑（或判断自定义页面和mCurrentPage是否一致）
         } else {
             for (int i = mPageInfos.size() - 1; i >= 0; i--) {
                 PageInfo pageTimeCalculateTool = mPageInfos.get(i);
-                if (mCurrentClassName.equals(pageTimeCalculateTool
-                        .getPageName())) {
+                if (mCurrentClassName.equals(pageTimeCalculateTool.getPageName())) {
                     if (pageTimeCalculateTool != null) {
                         pageTimeCalculateTool.onResume();
                     }
@@ -382,15 +377,14 @@ public class StatisticsHandler {
     private void startNewStatistics() {
         mNoParamEvents.clear();
         mHasParamEvents.clear();
-        mStatisticsResult = new StatisticsResult(mNoParamEvents,mHasParamEvents,System.currentTimeMillis());
+        mStatisticsResult = new StatisticsResult(mNoParamEvents, mHasParamEvents, System.currentTimeMillis());
         clearCache();
         initNewStatisticsItem();
         mStatisticsResult.getStatisticItems().add(mStatisticsItem);
     }
 
     private void deleteTodayCacheFile() {
-        if (mContext != null)
-            FileSerializableUtils.getInstence().deleteTodayLogFile(mContext);
+        if (mContext != null) FileSerializableUtils.getInstence().deleteTodayLogFile(mContext);
     }
 
     private void initNewStatisticsItem() {
@@ -407,7 +401,7 @@ public class StatisticsHandler {
         mContext = context.getApplicationContext();
         String className = getShortClassName(context);
 
-        if(mStatisticsResult == null){
+        if (mStatisticsResult == null) {
             LogUtils.D("执行onPause方法之前，没有创建日志信息");
             return;
         }
@@ -416,12 +410,12 @@ public class StatisticsHandler {
             LogUtils.D("mPageInfos is null | mPageInfos.size == 0");
             return;
         }
-        if(!isResume){
-            LogUtils.E(className+":未执行onResume而直接执行onPause出错");
+        if (!isResume) {
+            LogUtils.E(className + ":未执行onResume而直接执行onPause出错");
             return;
         }
-        if(TextUtils.isEmpty(mCurrentClassName)){
-            LogUtils.D("当前页面"+mCurrentClassName+":未先执行onResume，却执行了onPause()");
+        if (TextUtils.isEmpty(mCurrentClassName)) {
+            LogUtils.D("当前页面" + mCurrentClassName + ":未先执行onResume，却执行了onPause()");
             return;
         }
 
@@ -470,10 +464,10 @@ public class StatisticsHandler {
         }
         mStatisticsItem.setExceptionInfo(exceptionInfo);
 
-        //保存退出的时间
+        // 保存退出的时间
         mStatisticsResult.setEndTime(System.currentTimeMillis());
         saveStatisticsResult();
-//		System.exit(1);
+        // System.exit(1);
     }
 
     public void onKillProcess() {
@@ -497,7 +491,8 @@ public class StatisticsHandler {
      * @return true代表发送成功,fasle代表发送失败
      */
     public boolean reportResult(StatisticsResult statisticsResult) {
-        if (TextUtils.isEmpty(AppInfo.getInstance().getAppkey(mContext))||AppInfo.getInstance().getAppkey(mContext).length()!=10) {
+        if (TextUtils.isEmpty(AppInfo.getInstance().getAppkey(mContext))
+                || AppInfo.getInstance().getAppkey(mContext).length() != 10) {
             LogUtils.E("appKey is null or appKey is wrong,check your config");
             return false;
         }
@@ -511,8 +506,7 @@ public class StatisticsHandler {
             JSONArray eventArray = new JSONArray();
             JSONArray exceptionArray = new JSONArray();
 
-            ArrayList<StatisticsItem> statisticItems = statisticsResult
-                    .getStatisticItems();
+            ArrayList<StatisticsItem> statisticItems = statisticsResult.getStatisticItems();
             for (StatisticsItem item : statisticItems) {
 
                 try {
@@ -525,7 +519,7 @@ public class StatisticsHandler {
                     for (PageInfo pageTimeCalculateTool : item.getPageInfos()) {
                         JSONObject page = new JSONObject();
                         page.put("n", pageTimeCalculateTool.getPageName());
-//                        page.put("d", pageTimeCalculateTool.getScanTime());
+                        // page.put("d", pageTimeCalculateTool.getScanTime());
                         page.put("ps", 0);
                         pages.put(page);
                     }
@@ -547,34 +541,34 @@ public class StatisticsHandler {
             }
 
             try {
-                //无参数的事件
+                // 无参数的事件
                 List<EventItem> noParamEvents = statisticsResult.getNoParamEvents();
                 for (EventItem eventItem : noParamEvents) {
                     JSONObject event = new JSONObject();
                     event.put("d", eventItem.getEventValue());
                     event.put("t", eventItem.getStartTime());
-//				event.put("s", eventItem.getHappenTime());
+                    // event.put("s", eventItem.getHappenTime());
                     event.put("c", eventItem.getCount());
                     event.put("i", eventItem.getEventName());
                     event.put("p", new JSONArray());
                     eventArray.put(event);
                 }
-                //带参数的事件
+                // 带参数的事件
                 List<EventItem> hasParamEvents = statisticsResult.getHasParamEvents();
                 for (EventItem eventItem : hasParamEvents) {
                     JSONObject event = new JSONObject();
                     event.put("d", eventItem.getEventValue());
                     event.put("t", eventItem.getStartTime());
-//				event.put("s", eventItem.getHappenTime());
+                    // event.put("s", eventItem.getHappenTime());
                     event.put("c", eventItem.getCount());
                     event.put("i", eventItem.getEventName());
 
-                    if(eventItem.getEventParamMap()!=null&&eventItem.getEventParamMap().size()>0){
+                    if (eventItem.getEventParamMap() != null && eventItem.getEventParamMap().size() > 0) {
                         JSONArray eventParamArray = new JSONArray();
                         for (Map.Entry<String, String> eventParamEntry : eventItem.getEventParamMap().entrySet()) {
                             JSONObject eventParam = new JSONObject();
-                            eventParam.put("k",eventParamEntry.getKey());
-                            eventParam.put("v",eventParamEntry.getValue());
+                            eventParam.put("k", eventParamEntry.getKey());
+                            eventParam.put("v", eventParamEntry.getValue());
                             eventParamArray.put(eventParam);
                         }
                         event.put("p", eventParamArray);
@@ -595,13 +589,13 @@ public class StatisticsHandler {
                 sendResult = false;
                 return sendResult;
             }
-            LogUtils.D("上报消息长度:"+reportData.toString().length()+"\n消息：" + reportData.toString());
-            //联网上报成功，清空上报内容
+            LogUtils.D("上报消息长度:" + reportData.toString().length() + "\n消息：" + reportData.toString());
+            // 联网上报成功，清空上报内容
             boolean result = StatisticsApi.sendLog(mContext, reportData.toString(), 30 * 1000, 30 * 1000);
-//			boolean result = true;
+            // boolean result = true;
             LogUtils.D("上报结果:" + result);
             sendResult = result;
-        }else{
+        } else {
             LogUtils.D("net disable");
         }
         return sendResult;
@@ -621,11 +615,13 @@ public class StatisticsHandler {
                         mCurrentPage = null;
                         mNoParamEvents.clear();
                         mHasParamEvents.clear();
-                        mStatisticsResult = new StatisticsResult(mNoParamEvents,mHasParamEvents,System.currentTimeMillis());
+                        mStatisticsResult =
+                                new StatisticsResult(mNoParamEvents, mHasParamEvents, System.currentTimeMillis());
                     }
 
                     if (mStatisticsResult == null) {
-                        mStatisticsResult = new StatisticsResult(mNoParamEvents,mHasParamEvents,System.currentTimeMillis());
+                        mStatisticsResult =
+                                new StatisticsResult(mNoParamEvents, mHasParamEvents, System.currentTimeMillis());
                     }
 
                     initNewStatisticsItem();
@@ -641,14 +637,13 @@ public class StatisticsHandler {
         }
     }
 
-    private String convertStatisticResultToJson(StatisticsResult statisticsResult){
+    private String convertStatisticResultToJson(StatisticsResult statisticsResult) {
         JSONObject reportData = new JSONObject();
         JSONArray pageStatArray = new JSONArray();
         JSONArray eventArray = new JSONArray();
         JSONArray exceptionArray = new JSONArray();
 
-        ArrayList<StatisticsItem> statisticItems = statisticsResult
-                .getStatisticItems();
+        ArrayList<StatisticsItem> statisticItems = statisticsResult.getStatisticItems();
         for (StatisticsItem item : statisticItems) {
 
             try {
@@ -661,7 +656,7 @@ public class StatisticsHandler {
                 for (PageInfo pageTimeCalculateTool : item.getPageInfos()) {
                     JSONObject page = new JSONObject();
                     page.put("n", pageTimeCalculateTool.getPageName());
-//                    page.put("d", pageTimeCalculateTool.getScanTime());
+                    // page.put("d", pageTimeCalculateTool.getScanTime());
                     page.put("ps", 0);
                     pages.put(page);
                 }
@@ -676,39 +671,38 @@ public class StatisticsHandler {
                 }
                 pageStat.put("p", pages);
                 pageStatArray.put(pageStat);
-            } catch (Exception e) {
-            }
+            } catch (Exception e) {}
         }
 
         try {
-            //无参数的事件
+            // 无参数的事件
             List<EventItem> noParamEvents = statisticsResult.getNoParamEvents();
             for (EventItem eventItem : noParamEvents) {
                 JSONObject event = new JSONObject();
                 event.put("d", eventItem.getEventValue());
                 event.put("t", eventItem.getStartTime());
-//				event.put("s", eventItem.getHappenTime());
+                // event.put("s", eventItem.getHappenTime());
                 event.put("c", eventItem.getCount());
                 event.put("i", eventItem.getEventName());
                 event.put("p", new JSONArray());
                 eventArray.put(event);
             }
-            //带参数的事件
+            // 带参数的事件
             List<EventItem> hasParamEvents = statisticsResult.getHasParamEvents();
             for (EventItem eventItem : hasParamEvents) {
                 JSONObject event = new JSONObject();
                 event.put("d", eventItem.getEventValue());
                 event.put("t", eventItem.getStartTime());
-//				event.put("s", eventItem.getHappenTime());
+                // event.put("s", eventItem.getHappenTime());
                 event.put("c", eventItem.getCount());
                 event.put("i", eventItem.getEventName());
 
-                if(eventItem.getEventParamMap()!=null&&eventItem.getEventParamMap().size()>0){
+                if (eventItem.getEventParamMap() != null && eventItem.getEventParamMap().size() > 0) {
                     JSONArray eventParamArray = new JSONArray();
                     for (Map.Entry<String, String> eventParamEntry : eventItem.getEventParamMap().entrySet()) {
                         JSONObject eventParam = new JSONObject();
-                        eventParam.put("k",eventParamEntry.getKey());
-                        eventParam.put("v",eventParamEntry.getValue());
+                        eventParam.put("k", eventParamEntry.getKey());
+                        eventParam.put("v", eventParamEntry.getValue());
                         eventParamArray.put(eventParam);
                     }
                     event.put("p", eventParamArray);
@@ -733,10 +727,9 @@ public class StatisticsHandler {
      * 保存统计结果
      */
     private static void saveStatisticsResult() {
-//		LogUtils.E("准备保存数据");
+        LogUtils.E("准备保存数据");
         try {
-            FileSerializableUtils.getInstence().saveStatisticsResultToFile(mContext,
-                    mStatisticsResult);
+            FileSerializableUtils.getInstence().saveStatisticsResultToFile(mContext, mStatisticsResult);
         } catch (IOException e) {
             e.printStackTrace();
         }

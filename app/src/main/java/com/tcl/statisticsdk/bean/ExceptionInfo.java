@@ -11,9 +11,9 @@ import java.io.Serializable;
 public class ExceptionInfo implements Serializable {
 
 
-    // 异常信息
+    // 错误信息
     private String exceptionMessage;
-    // 异常原因
+    // 错误原因
     private String exceptionCause;
     // 异常发生时间
     private long excetpionTime = -8099483763844579328L;
@@ -22,6 +22,10 @@ public class ExceptionInfo implements Serializable {
     // 版本号 如 101
     private String versionCode;
 
+
+    public String getVersionCode() {
+        return this.versionCode;
+    }
 
     public void setVersionName(String versionCode) {
         versionCode = this.versionCode;

@@ -10,6 +10,9 @@ import java.io.Serializable;
  *
  * -- TODO 如果是像fragment那样快速的滑动操作很多次那么会产生很多的 pageInfo的对象，
  *
+ *
+ *
+ *
  */
 public class PageInfo implements Serializable {
 
@@ -19,14 +22,21 @@ public class PageInfo implements Serializable {
 
     // 页面代号/名称
     private String pageName;
-    // 页面浏览总的时间
-    private long castTime = -8099484176161439744L;
-    private long endTIme = -8099484176161439744L;
+
     // 一次浏览开始时间
     private long startTime = -8099484176161439744L;
+    // 结束时间
+    private long endTIme = -8099484176161439744L;
+    // 页面浏览总的时间
+    private long castTime = -8099484176161439744L;
+
+
+
     private int currentStatus = 1;
 
-
+    public void setEndTIme(long endTime) {
+        this.endTIme = endTime;
+    }
 
     public PageInfo(String pageName) {
         this.pageName = pageName;
