@@ -22,15 +22,25 @@ public class ExceptionInfo implements Serializable {
     // 版本号 如 101
     private String versionCode;
 
-
+    /**
+     * 版本号
+     * 
+     * @return
+     */
     public String getVersionCode() {
         return this.versionCode;
     }
+
 
     public void setVersionName(String versionCode) {
         versionCode = this.versionCode;
     }
 
+    /**
+     * 版本名称
+     * 
+     * @return
+     */
     public String getAppVersion() {
         return this.appVersion;
     }

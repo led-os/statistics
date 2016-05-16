@@ -73,10 +73,7 @@ public class StatisticsApi {
             BufferedWriter bufferedWriter = null;
             BufferedReader bufferedReader = null;
             try {
-                bufferedWriter = new BufferedWriter(
-                        new OutputStreamWriter(new GZIPOutputStream(
-                                httpUrlConnection.getOutputStream()), "UTF-8"));
-
+                bufferedWriter = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(httpUrlConnection.getOutputStream()), "UTF-8"));
 
                 bufferedWriter.write(json);
 //				bufferedWriter.flush();

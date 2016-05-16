@@ -23,7 +23,7 @@ public class StatisticsAgent {
             return;
         }
         init(context);
-        StatisticsHandler.getInstance().sendMessage(0, context);
+        StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_RESUME, context);
     }
 
     public static synchronized void onPause(Context context) {
@@ -31,7 +31,7 @@ public class StatisticsAgent {
             LogUtils.D("onPause-- context is null");
             return;
         }
-        StatisticsHandler.getInstance().sendMessage(1, context);
+        StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_PAUSE, context);
     }
 
     public static synchronized void onPageStart(String pageName) {
@@ -39,7 +39,7 @@ public class StatisticsAgent {
             LogUtils.D("onPageStart-- pageName is null");
             return;
         }
-        StatisticsHandler.getInstance().sendMessage(5, pageName);
+        StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_PAGE_START, pageName);
     }
 
     public static synchronized void onPageEnd(String pageName) {
@@ -47,7 +47,7 @@ public class StatisticsAgent {
             LogUtils.D("onPageEnd-- pageName is null");
             return;
         }
-        StatisticsHandler.getInstance().sendMessage(6, pageName);
+        StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_PAGE_END, pageName);
     }
 
     public static synchronized void onEvent(Context context, String eventName) {
@@ -55,7 +55,7 @@ public class StatisticsAgent {
             throw new RuntimeException("error!eventName:" + eventName + " is not legal,only letter,number and underline is valid");
 
         EventItem event = new EventItem(System.currentTimeMillis(), eventName);
-        StatisticsHandler.getInstance().sendMessage(4, event);
+        StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_EVENT, event);
     }
 
     public static synchronized void onEvent(Context context, String eventName, HashMap<String, String> map) {
@@ -66,7 +66,7 @@ public class StatisticsAgent {
             throw new RuntimeException("error!map is not legal");
 
         EventItem event = new EventItem(System.currentTimeMillis(), eventName, map);
-        StatisticsHandler.getInstance().sendMessage(4, event);
+        StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_EVENT, event);
     }
 
     public static synchronized void onEvent(Context context, String eventName, Map<String, String> map, int value) {
@@ -77,16 +77,16 @@ public class StatisticsAgent {
             throw new RuntimeException("error!map is not legal");
 
         EventItem event = new EventItem(System.currentTimeMillis(), eventName, map, value);
-        StatisticsHandler.getInstance().sendMessage(4, event);
+        StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_EVENT, event);
     }
 
     public static void onExit(Context context) {
-        StatisticsHandler.getInstance().sendMessage(2);
+        StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_EXIT);
     }
 
     protected static void onErrorExit(Context context) {
         if (StatisticsConfig.isCatchExceptionEnable(context))
-            StatisticsHandler.getInstance().sendMessage(3);
+            StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_EXIT);
     }
 
     public static void init(Context context) {
@@ -96,7 +96,7 @@ public class StatisticsAgent {
     private static void initExceptionCatcher(Context context) {
         synchronized (StatisticsAgent.class) {
             if (!(mInitCatchException)) {
-                StatisticsHandler.getInstance().sendMessage(7, context);
+                StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_CATCH_EXCEPTION, context);
                 mInitCatchException = true;
             }
         }
@@ -119,6 +119,6 @@ public class StatisticsAgent {
     }
 
     public static synchronized void sendLog() {
-        StatisticsHandler.getInstance().sendMessage(999);
+        StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_SEND_LOG);
     }
 }

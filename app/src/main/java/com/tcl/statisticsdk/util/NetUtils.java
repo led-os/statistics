@@ -136,4 +136,13 @@ public class NetUtils {
         return connectInfo == NetState.NET_WIFI || connectInfo == NetState.NET_2G || connectInfo == NetState.NET_3G
                 || connectInfo == NetState.NET_4G;
     }
+
+
+    /**
+     * @param context
+     */
+    public String getMCC(Context context) {
+        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        return telephonyManager.getNetworkOperator();
+    }
 }

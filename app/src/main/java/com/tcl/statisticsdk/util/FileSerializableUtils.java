@@ -2,18 +2,15 @@ package com.tcl.statisticsdk.util;
 
 import android.content.Context;
 import android.text.TextUtils;
-
 import com.tcl.statisticsdk.bean.EventItem;
 import com.tcl.statisticsdk.bean.ExceptionInfo;
 import com.tcl.statisticsdk.bean.PageInfo;
 import com.tcl.statisticsdk.bean.StatisticsItem;
 import com.tcl.statisticsdk.bean.StatisticsResult;
-import com.tcl.statisticsdk.systeminfo.AppInfo;
-
+import com.tcl.statisticsdk.systeminfo.DeviceBasicInfo;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -144,8 +141,7 @@ public class FileSerializableUtils {
         if ((logFile != null) && (logFile.exists())) logFile.delete();
     }
 
-    public boolean saveStatisticsResultToLastDayFile(Context context, StatisticsResult statisticsResult)
-            throws IOException {
+    public boolean saveStatisticsResultToLastDayFile(Context context, StatisticsResult statisticsResult) throws IOException {
         File filesDir = context.getFilesDir();
         File logFileDir = new File(filesDir, "log");
         if (!(logFileDir.exists())) logFileDir.mkdir();
@@ -167,8 +163,8 @@ public class FileSerializableUtils {
      * @return
      */
     public String resultToJson(StatisticsResult statisticsResult, Context mContext) {
-        if (TextUtils.isEmpty(AppInfo.getInstance().getAppkey(mContext))
-                || AppInfo.getInstance().getAppkey(mContext).length() != 10) {
+        if (TextUtils.isEmpty(DeviceBasicInfo.getInstance().getAppkey(mContext))
+                || DeviceBasicInfo.getInstance().getAppkey(mContext).length() != 10) {
             LogUtils.E("appKey is null or appKey is wrong,check your config");
             return null;
         }
@@ -255,7 +251,7 @@ public class FileSerializableUtils {
             reportData.put("ev", eventArray);
 
             JSONObject appinfo = new JSONObject();
-            AppInfo.getInstance().setAppinfo(mContext, appinfo);
+            DeviceBasicInfo.getInstance().setAppinfo(mContext, appinfo);
             reportData.put("he", appinfo);
 
         } catch (JSONException e) {

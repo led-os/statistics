@@ -1,7 +1,10 @@
 package com.tcl.statisticsdk.util;
 
+import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.content.Context;
-import android.graphics.Point;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -9,23 +12,61 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.WindowManager;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.util.Locale;
 
 /**
- * Created by tylertang@tcl.com ty_sany@163.com on 2016/5/12.
+ * @author tylertang@tcl.com ty_sany@163.com
+ * @date 2016/5/12
  *
- * 
- *
- * 参考资料 http://www.cnblogs.com/Amandaliu/archive/2011/11/06/2238177.html
+ *       参考资料 http://www.cnblogs.com/Amandaliu/archive/2011/11/06/2238177.html
  *
  */
 public class DeviceUtils {
+
+    private final static int kSystemRootStateUnknow = -1;
+    private final static int kSystemRootStateDisable = 0;
+    private final static int kSystemRootStateEnable = 1;
+    private static int systemRootState = kSystemRootStateUnknow;
+
+    /**
+     * 判断是否手机是否ROOT
+     *
+     * @return boolean
+     */
+    public static boolean isRootSystem() {
+        if (systemRootState == kSystemRootStateEnable) {
+            return true;
+        } else if (systemRootState == kSystemRootStateDisable) {
+
+            return false;
+        }
+        File f = null;
+        final String kSuSearchPaths[] = {"/system/bin/", "/system/xbin/", "/system/sbin/", "/sbin/", "/vendor/bin/"};
+        try {
+            for (int i = 0; i < kSuSearchPaths.length; i++) {
+                f = new File(kSuSearchPaths[i] + "su");
+                if (f != null && f.exists()) {
+                    systemRootState = kSystemRootStateEnable;
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        systemRootState = kSystemRootStateDisable;
+        return false;
+    }
+
 
 
     /**
@@ -41,7 +82,6 @@ public class DeviceUtils {
         }
         return androidId;
     }
-
 
 
     /**
@@ -77,7 +117,7 @@ public class DeviceUtils {
 
     /**
      * 获取手机IMEA
-     * 
+     *
      * @param context
      * @return String IMEA
      *
@@ -100,21 +140,12 @@ public class DeviceUtils {
                 // ActivityCompat.requestPermissions(context, new String[]
                 // {Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE_ASK_READ_PHONE_PERMISSION);
             }
+        } else {
+            imea = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
         }
         return imea;
     }
 
-
-    /**
-     * //--TODO 目前好像不好处理
-     *
-     * @return
-     */
-    public static boolean isRoot() {
-
-
-        return false;
-    }
 
 
     /**
@@ -155,7 +186,6 @@ public class DeviceUtils {
 
 
     public static int getHeight(Context context) {
-        Point point = new Point();
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         return windowManager.getDefaultDisplay().getHeight();
     }
@@ -184,11 +214,9 @@ public class DeviceUtils {
     }
 
 
-
     /*
      * ****************************************************************
-     * 子函数：获得本地MAC地址**************************************************************** ---TODO
-     * 这个好像不起作用
+     * 子函数：获得本地MAC地址****************************************************************
      */
     public static String getMacAddress() {
         String result = "";
@@ -243,9 +271,10 @@ public class DeviceUtils {
     }
 
 
+
     /**
      * getMAc
-     * 
+     *
      * @param context
      * @return
      */
@@ -254,9 +283,197 @@ public class DeviceUtils {
         WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 
         WifiInfo info = wifi.getConnectionInfo();
-
         return info.getMacAddress();
-
     }
+
+
+    private static final int ERROR = -1;
+
+    /**
+     * SDCARD是否存
+     */
+    public static boolean externalMemoryAvailable() {
+        return android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
+    }
+
+
+    /**
+     * 获取手机内部总的存储空间
+     *
+     * @return
+     */
+    public static long getTotalInternalMemorySize_() {
+        File path = Environment.getDataDirectory();
+        StatFs stat = new StatFs(path.getPath());
+        long blockSize = stat.getBlockSize();
+        long totalBlocks = stat.getBlockCount();
+        return totalBlocks * blockSize;
+    }
+
+    /**
+     * 获取SDCARD剩余存储空间
+     *
+     * @return
+     */
+    public static long getAvailableExternalMemorySize() {
+        if (externalMemoryAvailable()) {
+            File path = Environment.getExternalStorageDirectory();
+            StatFs stat = new StatFs(path.getPath());
+            long blockSize = stat.getBlockSize();
+            long availableBlocks = stat.getAvailableBlocks();
+            return availableBlocks * blockSize;
+        } else {
+            return ERROR;
+        }
+    }
+
+    /**
+     * 获取SDCARD总的存储空间
+     *
+     * @return
+     */
+    public static long getTotalExternalMemorySize() {
+        if (externalMemoryAvailable()) {
+            File path = Environment.getExternalStorageDirectory();
+            StatFs stat = new StatFs(path.getPath());
+            long blockSize = stat.getBlockSize();
+            long totalBlocks = stat.getBlockCount();
+            return totalBlocks * blockSize;
+        } else {
+            return ERROR;
+        }
+    }
+
+    /**
+     * 获取当前可用内存，返回数据以字节为单位。
+     *
+     * @param context 可传入应用程序上下文。
+     * @return 当前可用内存单位为B。
+     */
+    public static long getAvailableMemory(Context context) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
+        am.getMemoryInfo(memoryInfo);
+        return memoryInfo.availMem;
+    }
+
+
+    /**
+     * 获取当前可用内存，返回数据以字节为单位。
+     *
+     * @param context 可传入应用程序上下文。
+     * @return 当前可用内存单位为B。
+     */
+    @TargetApi(16)
+    public static long getTotalMemory(Context context) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
+        am.getMemoryInfo(memoryInfo);
+        return memoryInfo.totalMem;
+    }
+
+    /**
+     * 像素密度
+     */
+    public static float getDensity(Context context) {
+
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        DisplayMetrics dm = new DisplayMetrics();
+        windowManager.getDefaultDisplay().getMetrics(dm);
+
+        return dm.density;
+    }
+
+
+    /**
+     * 机器型号
+     *
+     * @return String
+     */
+    public static String getModel() {
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(android.os.Build.BRAND);
+        sb.append("|");
+        sb.append(android.os.Build.BOARD);
+
+        String model = sb.toString();
+
+        // 手机型号
+        model = android.os.Build.MODEL;
+        model = model.replace(" ", "");
+        if ((!(TextUtils.isEmpty(model))) && (model.length() > 30)) {
+            model = model.substring(0, 30);
+        }
+        return model;
+    }
+
+
+    /**
+     * 序列号
+     * 
+     * @return String
+     */
+    public static String getSerialNumber() {
+        String serial = null;
+        try {
+            Class c = Class.forName("android.os.SystemProperties");
+            Method get = c.getMethod("get", new Class[] {String.class});
+            serial = (String) get.invoke(c, new Object[] {"ro.serialno"});
+            LogUtils.D("serialNumber:" + serial);
+        } catch (Exception c) {}
+        return serial;
+    }
+
+
+    /**
+     * 得到应用的版本号
+     * 
+     * @return String 版本号
+     */
+    public static String getVersionCode() {
+
+
+        return null;
+    }
+
+
+    /**
+     * 得到应用的版本名称
+     * 
+     * @return String
+     */
+    public static String getVersionName(Context context) {
+        String versionName = null;
+        PackageManager pm = context.getPackageManager();
+        try {
+            PackageInfo pi = pm.getPackageInfo(context.getPackageName(), 0);
+            versionName = pi.versionName;
+
+        } catch (PackageManager.NameNotFoundException pi) {
+            pi.printStackTrace();
+        }
+        return versionName;
+    }
+
+    /**
+     * 得到应用的版本号
+     *
+     * @return String
+     */
+    public static String getVersionCode(Context context) {
+        String versionCode = null;
+        PackageManager pm = context.getPackageManager();
+        try {
+            PackageInfo pi = pm.getPackageInfo(context.getPackageName(), 0);
+            versionCode = pi.versionCode + "";
+        } catch (PackageManager.NameNotFoundException pi) {
+            pi.printStackTrace();
+        }
+        return versionCode;
+    }
+
+
 
 }
