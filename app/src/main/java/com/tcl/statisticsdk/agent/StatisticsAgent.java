@@ -3,6 +3,7 @@ package com.tcl.statisticsdk.agent;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.orhanobut.logger.Logger;
 import com.tcl.statisticsdk.bean.EventItem;
 import com.tcl.statisticsdk.util.CheckUtils;
 import com.tcl.statisticsdk.util.LogUtils;
@@ -15,6 +16,7 @@ public class StatisticsAgent {
 
     static {
         mInitCatchException = false;
+        Logger.init("tyler.tang");
     }
 
     public static synchronized void onResume(Context context) {
@@ -52,7 +54,8 @@ public class StatisticsAgent {
 
     public static synchronized void onEvent(Context context, String eventName) {
         if (!(CheckUtils.isLegalEventName(eventName)))
-            throw new RuntimeException("error!eventName:" + eventName + " is not legal,only letter,number and underline is valid");
+            throw new RuntimeException("error!eventName:" + eventName
+                    + " is not legal,only letter,number and underline is valid");
 
         EventItem event = new EventItem(System.currentTimeMillis(), eventName);
         StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_EVENT, event);
@@ -60,10 +63,10 @@ public class StatisticsAgent {
 
     public static synchronized void onEvent(Context context, String eventName, HashMap<String, String> map) {
         if (!(CheckUtils.isLegalEventName(eventName)))
-            throw new RuntimeException("error!eventName:" + eventName + " is not legal,only letter,number and underline is valid");
+            throw new RuntimeException("error!eventName:" + eventName
+                    + " is not legal,only letter,number and underline is valid");
 
-        if (!(CheckUtils.isLegalParamKeyAndValue(map)))
-            throw new RuntimeException("error!map is not legal");
+        if (!(CheckUtils.isLegalParamKeyAndValue(map))) throw new RuntimeException("error!map is not legal");
 
         EventItem event = new EventItem(System.currentTimeMillis(), eventName, map);
         StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_EVENT, event);
@@ -71,10 +74,10 @@ public class StatisticsAgent {
 
     public static synchronized void onEvent(Context context, String eventName, Map<String, String> map, int value) {
         if (!(CheckUtils.isLegalEventName(eventName)))
-            throw new RuntimeException("error!eventName:" + eventName + " is not legal,only letter,number and underline is valid");
+            throw new RuntimeException("error!eventName:" + eventName
+                    + " is not legal,only letter,number and underline is valid");
 
-        if (!(CheckUtils.isLegalParamKeyAndValue(map)))
-            throw new RuntimeException("error!map is not legal");
+        if (!(CheckUtils.isLegalParamKeyAndValue(map))) throw new RuntimeException("error!map is not legal");
 
         EventItem event = new EventItem(System.currentTimeMillis(), eventName, map, value);
         StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_EVENT, event);

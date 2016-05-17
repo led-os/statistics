@@ -1,5 +1,6 @@
 package com.tcl.statisticsdk;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -14,14 +15,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         init();
     }
-
 
     private void init() {
         StatisticsAgent.setDebugMode(true);
         findViewById(R.id.btn_click_event).setOnClickListener(this);
+        findViewById(R.id.btn_switch_page).setOnClickListener(this);
     }
 
 
@@ -30,6 +30,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onResume();
         // 页面onResume
         StatisticsAgent.onResume(getApplicationContext());
+
+
+        System.currentTimeMillis();
     }
 
 
@@ -45,7 +48,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int id = v.getId();
 
         if (id == R.id.btn_click_event) {
+
             StatisticsAgent.onEvent(getApplicationContext(), EVENT_NAME_1);
+
+        } else if (id == R.id.btn_switch_page) {
+
+            Intent intent = new Intent();
+            intent.setClass(this, ActivityTwo.class);
+            startActivity(intent);
         }
 
     }

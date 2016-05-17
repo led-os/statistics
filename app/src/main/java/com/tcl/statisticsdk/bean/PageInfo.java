@@ -39,13 +39,23 @@ public class PageInfo implements Serializable {
     }
 
 
-    public void setStartTime(long startTime){
+    public void setStartTime(long startTime) {
         this.startTime = startTime;
     }
 
     public PageInfo(String pageName) {
         this.pageName = pageName;
         onResume();
+    }
+
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+
+    public long getEndTime() {
+        return endTIme;
     }
 
     public PageInfo(String pageName, long startTime) {

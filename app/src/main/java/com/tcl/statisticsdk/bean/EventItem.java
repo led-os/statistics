@@ -19,6 +19,10 @@ public class EventItem implements Serializable {
     private int eventValue;
     // 事件开始时间
     private long startTime;
+    // 其它的信息
+    private String eventExtrInfo;
+
+
 
     /**
      * 构造方法
@@ -107,6 +111,15 @@ public class EventItem implements Serializable {
 
     public int getEventValue() {
         return this.eventValue;
+    }
+
+
+    public String getEventExtrInfo() {
+        return eventExtrInfo;
+    }
+
+    public void setEventExtrInfo(String info) {
+        this.eventExtrInfo = info;
     }
 
 }

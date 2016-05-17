@@ -3,7 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.tcl.statisticsdk.MainActivity">
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.tcl.statisticsdk.ActivityTwo">
+
 
     <TextView
         android:id="@+id/tx_activity_one"
@@ -11,26 +16,24 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"
-        android:text="@string/activity_one"
+        android:text="@string/activity_two"
         android:textSize="24dp" />
 
     <Button
-        android:id="@+id/btn_click_event"
+        android:id="@+id/btn_click_event_two"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tx_activity_one"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
         android:text="@string/client_event" />
 
 
     <Button
-        android:id="@+id/btn_switch_page"
+        android:id="@+id/btn_switch_page_two"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btn_click_event"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
         android:text="@string/forward" />
 
 

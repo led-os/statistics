@@ -129,7 +129,7 @@ public class DeviceBasicInfo {
         // 序列号
         String serialno = DeviceUtils.getSerialNumber();
         // 合成的唯一编码
-        mUUID = serialno + "_" +mImea + "_" + this.mMacAddress;
+        mUUID = serialno + "_" + mImea + "_" + this.mMacAddress;
         mUUID = MD5.getMD5(mUUID);
         mUUID2 = mImea;
         if ((mUUID2 == null) || (mUUID2.equals(""))) {
@@ -210,37 +210,25 @@ public class DeviceBasicInfo {
                     "VersionName is too long , limit length is 15,Please modify your VersionName!!!");
         try {
 
-            appinfo.put("ai", Build.version);
-            appinfo.put("r", DeviceUtils.getIMEA(context));
-            appinfo.put("mc", this.mMacAddress);
-            appinfo.put("t", "");
-            appinfo.put("c", mOsVersion);
-            appinfo.put("im", System.currentTimeMillis());
-            appinfo.put("ir", "");
-            appinfo.put("fr", this.mNetworkOperator);
-            appinfo.put("ct", "");
-            appinfo.put("cr", getChannelId(mContext));
-            appinfo.put("cc", "0");
-            appinfo.put("am", "");
-            appinfo.put("om", "Android");
-            appinfo.put("ch", NetUtils.getConnectType(context));
+            appinfo.put("ai", mAndroidId);
+            appinfo.put("r", mROM);
+            appinfo.put("t", mModel);
+            appinfo.put("c", mCountry);
+            appinfo.put("im", mImea);
+            appinfo.put("ir", isRoot);
+            appinfo.put("fr", mFre);
+            appinfo.put("ct", mCpuType);
+            appinfo.put("cr", mCpuType);
+            appinfo.put("cc", mCpuCount);
+            appinfo.put("am", mRAM);
+            appinfo.put("om", mROM);
+            appinfo.put("ch", mChannel);
             appinfo.put("mac", mMacAddress);
-            appinfo.put("op", getAppkey(mContext));
-            appinfo.put("i", "");
+            appinfo.put("op", mOp);
+            appinfo.put("i", mNetworkOperator);
             appinfo.put("h", mHeight);
             appinfo.put("w", mWidght);
-            appinfo.put("sv", "1.0.0");
-
-            // appinfo.put("gl", "");
-            // appinfo.put("t", System.currentTimeMillis());
-            // appinfo.put("s", this.mSDKVersion);
-            // appinfo.put("cl", "0_0_0");
-            // appinfo.put("pt", "0");
-            // appinfo.put("pn", mPackageName);
-            // appinfo.put("n", this.mVersionName);
-            // appinfo.put("a", (StatisticsConfig.getAPPVersion(mContext) == 0) ? mVersionCode :
-            // StatisticsConfig.getAPPVersion(mContext));StatisticsConfig.saveAPPVersion(mContext,
-            // mVersionCode);
+            appinfo.put("sv", mVersionCode);
 
         } catch (Exception localException) {
             localException.printStackTrace();

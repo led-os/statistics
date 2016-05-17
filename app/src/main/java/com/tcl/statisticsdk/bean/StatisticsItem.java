@@ -15,6 +15,10 @@ public class StatisticsItem implements Serializable {
     private List<PageInfo> pageInfos;
     // 异常信息
     private ExceptionInfo exceptionInfo;
+    // 启动开始时间
+    private long mStartTime;
+    // 启动结束时间
+    private long mEndTime;
 
     public List<PageInfo> getPageInfos() {
         return this.pageInfos;
