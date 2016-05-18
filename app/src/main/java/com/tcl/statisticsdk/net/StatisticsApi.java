@@ -3,10 +3,8 @@ package com.tcl.statisticsdk.net;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-
 import com.tcl.statisticsdk.util.LogUtils;
 import com.tcl.statisticsdk.util.MetaUtils;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -18,7 +16,6 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.zip.GZIPOutputStream;
 
-
 /**
  * 位置信息
  *
@@ -26,20 +23,19 @@ import java.util.zip.GZIPOutputStream;
  */
 public class StatisticsApi {
 
-    //服务器URL for china
+    // 服务器URL for china
+    // private final static String SERVER_URL_CHINA = "http://gw.csp.cn.tclclouds.com/api/log";
     private final static String SERVER_URL_CHINA = "http://gw.csp.cn.tclclouds.com/api/log";
-    //服务器URL for global
-    private final static String SERVER_URL_GLOBAL = "http://gw.csp.tclclouds.com/api/log";
-
+    // 服务器URL for global
+    private final static String SERVER_URL_GLOBAL = "http://gstest.udc.cn.tclclouds.com/api/device/log";
 
     static final String DOMAIN_GLOBAL = "global";
     static final String DOMAIN_CHINA = "china";
 
     private static String SERVER_URL = SERVER_URL_CHINA;
-
+    private static String TEST_SERVLET_URL = "http://10.128.208.84:8088/StaServer/DataServlet";
 
     private static final Proxy a = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.0.0.172", 80));
-
     private static final Proxy b = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.0.0.200", 80));
 
 
@@ -58,13 +54,13 @@ public class StatisticsApi {
 
             LogUtils.I("日志发送原始长度：" + json.length());
 
-            HttpURLConnection httpUrlConnection = getURLConnection(context, SERVER_URL, connectTimeout, readTimeout);
+            HttpURLConnection httpUrlConnection = getURLConnection(context, SERVER_URL_CHINA, connectTimeout, readTimeout);
             httpUrlConnection.setDoOutput(true);
             httpUrlConnection.setInstanceFollowRedirects(false);
             httpUrlConnection.setUseCaches(false);
             httpUrlConnection.setRequestMethod("POST");
             httpUrlConnection.setRequestProperty("Content-Type", "gzip");
-            //关闭连接
+            // 关闭连接
             httpUrlConnection.setRequestProperty("Connection", "close");
             httpUrlConnection.setRequestProperty("Content-encoding", "gzip");
             httpUrlConnection.connect();
@@ -73,15 +69,16 @@ public class StatisticsApi {
             BufferedWriter bufferedWriter = null;
             BufferedReader bufferedReader = null;
             try {
-                bufferedWriter = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(httpUrlConnection.getOutputStream()), "UTF-8"));
+                bufferedWriter =
+                        new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(
+                                httpUrlConnection.getOutputStream()), "UTF-8"));
 
                 bufferedWriter.write(json);
-//				bufferedWriter.flush();
+                // bufferedWriter.flush();
                 bufferedWriter.close();
                 bufferedWriter = null;
 
-                bufferedReader = new BufferedReader(new InputStreamReader(
-                        httpUrlConnection.getInputStream()));
+                bufferedReader = new BufferedReader(new InputStreamReader(httpUrlConnection.getInputStream()));
 
                 String str;
                 while ((str = bufferedReader.readLine()) != null) {
@@ -90,16 +87,14 @@ public class StatisticsApi {
                 bufferedReader.close();
                 bufferedReader = null;
 
-
-//				int i = httpUrlConnection.getContentLength();
+                // int i = httpUrlConnection.getContentLength();
                 httpUrlConnection.disconnect();
                 SERVER_URL = null;
 
                 if ((httpUrlConnection.getResponseCode() != 200)
-//						|| (i != 0)
-                        )
-                    throw new ClassNotFoundException("http code ="
-                            + httpUrlConnection.getResponseCode()
+                // || (i != 0)
+                )
+                    throw new ClassNotFoundException("http code =" + httpUrlConnection.getResponseCode()
                             + "& contentResponse=" + sb);
             } catch (IOException Exception) {
                 Exception.printStackTrace();
@@ -144,12 +139,12 @@ public class StatisticsApi {
      * @param readTimeOut
      * @return
      */
-    public static HttpURLConnection getURLConnection(Context context, String urlStr,
-                                                     int connectTimeOut, int readTimeOut) {
+    public static HttpURLConnection getURLConnection(Context context, String urlStr, int connectTimeOut, int readTimeOut) {
         HttpURLConnection httpURLConnection = null;
         try {
             URL url = new URL(urlStr);
-            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager connectivityManager =
+                    (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo1 = connectivityManager.getNetworkInfo(0);
             NetworkInfo networkInfo2 = connectivityManager.getNetworkInfo(1);
 
@@ -170,20 +165,15 @@ public class StatisticsApi {
                 }
                 LogUtils.D("current APN:" + str);
 
-                if ((str.startsWith("cmwap")) || (str.startsWith("uniwap"))
-                        || (str.startsWith("3gwap")))
-                    httpURLConnection = (HttpURLConnection) url
-                            .openConnection(a);
+                if ((str.startsWith("cmwap")) || (str.startsWith("uniwap")) || (str.startsWith("3gwap")))
+                    httpURLConnection = (HttpURLConnection) url.openConnection(a);
                 else if (str.startsWith("ctwap"))
-                    httpURLConnection = (HttpURLConnection) url
-                            .openConnection(b);
+                    httpURLConnection = (HttpURLConnection) url.openConnection(b);
                 else
-                    httpURLConnection = (HttpURLConnection) url
-                            .openConnection();
+                    httpURLConnection = (HttpURLConnection) url.openConnection();
             } else {
                 LogUtils.D("getConnection:not wifi and mobile");
-                httpURLConnection = (HttpURLConnection) url
-                        .openConnection();
+                httpURLConnection = (HttpURLConnection) url.openConnection();
             }
             httpURLConnection.setConnectTimeout(connectTimeOut);
             httpURLConnection.setReadTimeout(readTimeOut);

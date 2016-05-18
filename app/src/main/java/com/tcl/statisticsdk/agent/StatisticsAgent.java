@@ -24,8 +24,8 @@ public class StatisticsAgent {
             LogUtils.D("onResume-- context is null");
             return;
         }
-        init(context);
-        StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_RESUME, context);
+        //init(context);
+        //StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_RESUME, context);
     }
 
     public static synchronized void onPause(Context context) {
@@ -93,13 +93,14 @@ public class StatisticsAgent {
     }
 
     public static void init(Context context) {
-        initExceptionCatcher(context);
+//        initExceptionCatcher(context);
     }
 
     private static void initExceptionCatcher(Context context) {
         synchronized (StatisticsAgent.class) {
             if (!(mInitCatchException)) {
-                StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_CATCH_EXCEPTION, context);
+                Logger.d("发送始化异常捕获器的");
+//                StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_CATCH_EXCEPTION, context);
                 mInitCatchException = true;
             }
         }

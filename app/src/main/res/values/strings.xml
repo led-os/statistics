@@ -4,6 +4,8 @@
     <string name="client_event">模拟事件触发</string>
     <string name="forward">模拟跳装页面</string>
     <string name="activity_one">我是页面一</string>
+    <string name="test_error">异常测试</string>
+
 
     <string name="activity_two">我是页面二</string>
     <string name="activity_two_client_event">模拟事件触发</string>

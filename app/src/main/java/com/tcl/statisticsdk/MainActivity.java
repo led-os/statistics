@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.tcl.statisticsdk.agent.StatisticsAgent;
+import com.tcl.statisticsdk.util.LogUtils;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -19,18 +20,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void init() {
+
         StatisticsAgent.setDebugMode(true);
         findViewById(R.id.btn_click_event).setOnClickListener(this);
+        findViewById(R.id.btn_test_error).setOnClickListener(this);
         findViewById(R.id.btn_switch_page).setOnClickListener(this);
-    }
 
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable ex) {
+                LogUtils.D("uncatch Exception");
+
+            }
+        });
+
+
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
         // 页面onResume
         StatisticsAgent.onResume(getApplicationContext());
-
 
         System.currentTimeMillis();
     }
@@ -43,20 +54,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         StatisticsAgent.onPause(getApplicationContext());
     }
 
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
 
-        if (id == R.id.btn_click_event) {
+        switch (id) {
+            case R.id.btn_click_event:
 
-            StatisticsAgent.onEvent(getApplicationContext(), EVENT_NAME_1);
+                StatisticsAgent.onEvent(getApplicationContext(), EVENT_NAME_1);
 
-        } else if (id == R.id.btn_switch_page) {
+                break;
+            case R.id.btn_switch_page_two:
 
-            Intent intent = new Intent();
-            intent.setClass(this, ActivityTwo.class);
-            startActivity(intent);
+                Intent intent = new Intent();
+                intent.setClass(this, ActivityTwo.class);
+                startActivity(intent);
+
+                break;
+            case R.id.btn_test_error:
+
+                errorOccurs();
+
+                break;
         }
-
     }
+
+    private void errorOccurs() {
+
+        int numberone = 1;
+        int numbertwo = 0;
+
+        int result = numberone / numbertwo;
+    }
+
 }

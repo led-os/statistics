@@ -25,10 +25,20 @@
 
 
     <Button
-        android:id="@+id/btn_switch_page"
+        android:id="@+id/btn_test_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btn_click_event"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="@string/test_error" />
+
+
+    <Button
+        android:id="@+id/btn_switch_page"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_test_error"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:text="@string/forward" />

@@ -2,6 +2,7 @@ package com.tcl.statisticsdk.util;
 
 import android.content.Context;
 
+import com.orhanobut.logger.Logger;
 import com.tcl.statisticsdk.agent.StatisticsHandler;
 
 import java.io.PrintWriter;
@@ -19,7 +20,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     private static CrashHandler mInstance = new CrashHandler();
     private Context mContext;
 
-
     /**
      * 对外接口得到实例
      *
@@ -29,7 +29,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         return mInstance;
     }
 
-
     /**
      * 初始化
      *
@@ -37,8 +36,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      */
     public void init(Context context) {
         this.mContext = context;
-
         Thread.setDefaultUncaughtExceptionHandler(this);
+        Logger.d(" Thread.setDefaultUncaughtExceptionHandler(this);");
     }
 
 
@@ -49,8 +48,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      * @param ex
      */
     public void uncaughtException(Thread thread, Throwable ex) {
-        LogUtils.I("出错了");
-        handleException(thread, ex);
+        Logger.d("系统异常没有被捕获!");
+        //handleException(thread, ex);
     }
 
     private void handleException(Thread thread, Throwable ex) {
@@ -59,13 +58,15 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         }
 
         ex.printStackTrace();
-        saveCrashInfo(ex);
+//        saveCrashInfo(ex);
         StatisticsHandler.getInstance().onErrorExit();
 
+        /*
         if (!(this.mDefaultHandler.equals(this)))
             this.mDefaultHandler.uncaughtException(thread, ex);
 
         throw new RuntimeException(ex);
+        */
     }
 
 
@@ -75,10 +76,11 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         ex.printStackTrace(printWriter);
 
         Throwable cause = ex.getCause();
-        if (cause != null)
-            StatisticsHandler.mExcetpionCause = cause.toString();
+        if (cause != null) {
+//            StatisticsHandler.mExcetpionCause = cause.toString();
+        }
         else {
-            StatisticsHandler.mExcetpionCause = writer.toString().split("\n")[0];
+//            StatisticsHandler.mExcetpionCause = writer.toString().split("\n")[0];
         }
 
         StatisticsHandler.mExceptionMessage = writer.toString();

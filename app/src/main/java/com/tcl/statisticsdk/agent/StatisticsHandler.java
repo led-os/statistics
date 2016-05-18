@@ -142,7 +142,7 @@ public class StatisticsHandler {
                     break;
                 case WHAT_ON_CATCH_EXCEPTION:
                     if (obj != null) {
-                        catchException((Context) obj);
+//                        catchException((Context) obj);
                     }
                     break;
                 case WHAT_SEND_LOG:
@@ -180,6 +180,7 @@ public class StatisticsHandler {
      */
     private static void catchException(Context context) {
         if (context != null) {
+            Logger.d("初始化异常捕获CrashHandler");
             mContext = context.getApplicationContext();
             // 初始化异常记录器
             CrashHandler crashHandler = CrashHandler.getInstance();
@@ -309,25 +310,18 @@ public class StatisticsHandler {
             LogUtils.E(className + ":未执行onPause而直接执行onResume出错");
             return;
         }
-
         isResume = true;
-
         if (System.currentTimeMillis() - mExitTime > StatisticsConfig.getSessionTimeOut(mContext)) {
-
             // 距离之前离开页面超过Session时间
             mStartTime = System.currentTimeMillis();
             // 从文件中取出统计结果
             mStatisticsResult = fetchStatisticsResultFromFile();
             // 历史日志
             HashMap<Serializable, String> historyLogs = FileSerializableUtils.getInstence().getHistoryLogs(context);
-
             if (mStatisticsResult != null && mStatisticsResult.getStatisticItems().size() != 0) {
-
                 mNoParamEvents = mStatisticsResult.getNoParamEvents();
                 mHasParamEvents = mStatisticsResult.getHasParamEvents();
-
                 LogUtils.D("统计结果不为空，并且有统计对象，准备发送今日数据");
-
                 // 上报结果，后把数据清空结算
                 if (reportResult(mStatisticsResult)) {
                     deleteTodayCacheFile();
@@ -345,10 +339,8 @@ public class StatisticsHandler {
                 // 发送历史日志
                 SendHistoryLogHandler.getInstance().sendHistoryLogs(context);
             }
-
             // 清空临时缓存
             clearCache();
-
             if (mStatisticsResult == null) {
                 mStatisticsResult = new StatisticsResult(mNoParamEvents, mHasParamEvents, mStartTime);
             }
@@ -460,18 +452,17 @@ public class StatisticsHandler {
 
     public void onErrorExit() {
         ExceptionInfo exceptionInfo = new ExceptionInfo();
-        exceptionInfo.setExceptionMessage(mExceptionMessage);
-        exceptionInfo.setExceptionCause(mExcetpionCause);
+//        exceptionInfo.setExceptionMessage(mExceptionMessage);
+//        exceptionInfo.setExceptionCause(mExcetpionCause);
         exceptionInfo.setExcetpionTime(System.currentTimeMillis());
         if (mContext != null) {
             exceptionInfo.setAppVersion(DeviceUtils.getVersionName(mContext));
         }
         mStatisticsItem.setExceptionInfo(exceptionInfo);
-
         // 保存退出的时间
         mStatisticsResult.setEndTime(System.currentTimeMillis());
-        saveStatisticsResult();
-        // System.exit(1);
+//        saveStatisticsResult();
+//         System.exit(1);
     }
 
     public void onKillProcess() {
@@ -579,7 +570,7 @@ public class StatisticsHandler {
             for (EventItem eventItem : noParamEvents) {
                 JSONObject event = new JSONObject();
 
-                event.put("s", eventItem.getStartTime());
+                event.put("t", eventItem.getStartTime());
                 event.put("d", eventItem.getEventValue());
                 event.put("c", eventItem.getEventName());
                 event.put("i", eventItem.getEventExtrInfo());
@@ -590,7 +581,7 @@ public class StatisticsHandler {
             for (EventItem eventItem : hasParamEvents) {
                 JSONObject event = new JSONObject();
 
-                event.put("s", eventItem.getStartTime());
+                event.put("t", eventItem.getStartTime());
                 event.put("d", eventItem.getEventValue());
                 event.put("c", eventItem.getEventName());
                 event.put("i", eventItem.getEventExtrInfo());
