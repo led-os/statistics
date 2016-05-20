@@ -700,7 +700,6 @@ public class StatisticsHandler {
                 JSONObject event = new JSONObject();
                 event.put("d", eventItem.getEventValue());
                 event.put("t", eventItem.getStartTime());
-                // event.put("s", eventItem.getHappenTime());
                 event.put("c", eventItem.getCount());
                 event.put("i", eventItem.getEventName());
                 event.put("p", new JSONArray());
@@ -712,7 +711,6 @@ public class StatisticsHandler {
                 JSONObject event = new JSONObject();
                 event.put("d", eventItem.getEventValue());
                 event.put("t", eventItem.getStartTime());
-                // event.put("s", eventItem.getHappenTime());
                 event.put("c", eventItem.getCount());
                 event.put("i", eventItem.getEventName());
 

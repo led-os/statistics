@@ -382,7 +382,7 @@ public class DeviceUtils {
         DisplayMetrics dm = new DisplayMetrics();
         windowManager.getDefaultDisplay().getMetrics(dm);
 
-        return dm.density;
+        return dm.densityDpi;
     }
 
 

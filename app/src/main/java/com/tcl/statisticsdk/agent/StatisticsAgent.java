@@ -25,7 +25,7 @@ public class StatisticsAgent {
             return;
         }
         //init(context);
-        //StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_RESUME, context);
+        StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_RESUME, context);
     }
 
     public static synchronized void onPause(Context context) {

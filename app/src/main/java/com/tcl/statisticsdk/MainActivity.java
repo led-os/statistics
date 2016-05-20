@@ -42,8 +42,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onResume();
         // 页面onResume
         StatisticsAgent.onResume(getApplicationContext());
-
-        System.currentTimeMillis();
     }
 
 

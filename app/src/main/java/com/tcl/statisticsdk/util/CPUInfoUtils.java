@@ -88,7 +88,17 @@ public class CPUInfoUtils {
             ex.printStackTrace();
             result = "N/A";
         }
-        sCpuMaxFreq = result.trim();
+        try{
+            sCpuMaxFreq = result.trim();
+            int temp = Integer.parseInt(sCpuMaxFreq);
+            float tempGHZ = temp/(float)1000.0/(float)1000.0;
+            sCpuMaxFreq = tempGHZ+"GHz";
+        }catch (NumberFormatException formateE){
+            formateE.printStackTrace();
+            sCpuMaxFreq = "";
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return sCpuMaxFreq;
     }
 

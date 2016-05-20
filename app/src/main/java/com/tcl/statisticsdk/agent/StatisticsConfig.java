@@ -19,7 +19,7 @@ public class StatisticsConfig {
     }
 
     public static long getSessionTimeOut(Context context) {
-        return PreferenceUtils.readLong(context, "session_time_out", 30000L);
+        return PreferenceUtils.readLong(context, "session_time_out", 3000L);
     }
 
     public static void setSessionTimeOut(Context context, long value) {

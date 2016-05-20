@@ -65,7 +65,7 @@ public class DeviceBasicInfo {
     // 包名
     private String mPackageMame;
     // 程序版本号
-    private int mVersionCode;
+    private  static final int mVersionCode = 1;
     // 程序版本名称
     private String mVersionName;
     // 当前系统版本
@@ -117,8 +117,8 @@ public class DeviceBasicInfo {
         mCpuType = CPUInfoUtils.getCpuModel();
         mCpuCount = CPUInfoUtils.getCpuCoreNums();
         mCpuFre = CPUInfoUtils.getMaxCpuFreq();
-        mRAM = DeviceUtils.getTotalMemory(mContext);
-        mROM = DeviceUtils.getTotalExternalMemorySize();
+        mRAM = DeviceUtils.getTotalMemory(mContext)/1024L/1024L;
+        mROM = DeviceUtils.getTotalExternalMemorySize()/1024L/1024L;
         mChannel = getChannelId(mContext);
         mMacAddress = DeviceUtils.getMacAddress();
         mOp = DeviceUtils.getIMSI(mContext);
@@ -211,14 +211,14 @@ public class DeviceBasicInfo {
         try {
 
             appinfo.put("ai", mAndroidId);
-            appinfo.put("r", mROM);
+            appinfo.put("r", mRom);
             appinfo.put("t", mModel);
             appinfo.put("c", mCountry);
             appinfo.put("im", mImea);
             appinfo.put("ir", isRoot);
             appinfo.put("fr", mFre);
             appinfo.put("ct", mCpuType);
-            appinfo.put("cr", mCpuType);
+            appinfo.put("cr", mCpuFre);
             appinfo.put("cc", mCpuCount);
             appinfo.put("am", mRAM);
             appinfo.put("om", mROM);
@@ -229,6 +229,7 @@ public class DeviceBasicInfo {
             appinfo.put("h", mHeight);
             appinfo.put("w", mWidght);
             appinfo.put("sv", mVersionCode);
+
 
         } catch (Exception localException) {
             localException.printStackTrace();

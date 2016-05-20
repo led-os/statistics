@@ -25,19 +25,20 @@ public class StatisticsApi {
 
     // 服务器URL for china
     // private final static String SERVER_URL_CHINA = "http://gw.csp.cn.tclclouds.com/api/log";
+
+
     private final static String SERVER_URL_CHINA = "http://gw.csp.cn.tclclouds.com/api/log";
     // 服务器URL for global
-    private final static String SERVER_URL_GLOBAL = "http://gstest.udc.cn.tclclouds.com/api/device/log";
+    private final static String SERVER_URL_GLOBAL = "https://gstest.udc.cn.tclclouds.com/api/device/log";
 
     static final String DOMAIN_GLOBAL = "global";
     static final String DOMAIN_CHINA = "china";
 
-    private static String SERVER_URL = SERVER_URL_CHINA;
+    private static String SERVER_URL = SERVER_URL_GLOBAL;
     private static String TEST_SERVLET_URL = "http://10.128.208.84:8088/StaServer/DataServlet";
 
     private static final Proxy a = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.0.0.172", 80));
     private static final Proxy b = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.0.0.200", 80));
-
 
     /**
      * 发送日志
@@ -54,7 +55,7 @@ public class StatisticsApi {
 
             LogUtils.I("日志发送原始长度：" + json.length());
 
-            HttpURLConnection httpUrlConnection = getURLConnection(context, SERVER_URL_CHINA, connectTimeout, readTimeout);
+            HttpURLConnection httpUrlConnection = getURLConnection(context, SERVER_URL, connectTimeout, readTimeout);
             httpUrlConnection.setDoOutput(true);
             httpUrlConnection.setInstanceFollowRedirects(false);
             httpUrlConnection.setUseCaches(false);
@@ -68,10 +69,9 @@ public class StatisticsApi {
             StringBuilder sb = new StringBuilder();
             BufferedWriter bufferedWriter = null;
             BufferedReader bufferedReader = null;
+
             try {
-                bufferedWriter =
-                        new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(
-                                httpUrlConnection.getOutputStream()), "UTF-8"));
+                bufferedWriter = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(httpUrlConnection.getOutputStream()), "UTF-8"));
 
                 bufferedWriter.write(json);
                 // bufferedWriter.flush();
@@ -94,11 +94,9 @@ public class StatisticsApi {
                 if ((httpUrlConnection.getResponseCode() != 200)
                 // || (i != 0)
                 )
-                    throw new ClassNotFoundException("http code =" + httpUrlConnection.getResponseCode()
-                            + "& contentResponse=" + sb);
+                    throw new ClassNotFoundException("http code =" + httpUrlConnection.getResponseCode() + "& contentResponse=" + sb);
             } catch (IOException Exception) {
                 Exception.printStackTrace();
-
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
@@ -143,8 +141,7 @@ public class StatisticsApi {
         HttpURLConnection httpURLConnection = null;
         try {
             URL url = new URL(urlStr);
-            ConnectivityManager connectivityManager =
-                    (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo1 = connectivityManager.getNetworkInfo(0);
             NetworkInfo networkInfo2 = connectivityManager.getNetworkInfo(1);
 
