@@ -522,10 +522,10 @@ public class StatisticsHandler {
                 // 封装要上传的Sesion 访问次数信息
                 sessionStat.put("s", statisticsResult.getStartTime());
                 sessionStat.put("e", statisticsResult.getEndTime());
-                sessionStat.put("vc", vertionCode);
-                sessionStat.put("vn", vertionName);
-                sessionStat.put("pn", packageName);
-                sessionStat.put("la", launguage);
+//                sessionStat.put("vc", vertionCode);
+//                sessionStat.put("vn", vertionName);
+//                sessionStat.put("pn", packageName);
+//                sessionStat.put("la", launguage);
 
                 /* 封装要上传的单个页面访问信息 */
                 JSONArray pages = new JSONArray();

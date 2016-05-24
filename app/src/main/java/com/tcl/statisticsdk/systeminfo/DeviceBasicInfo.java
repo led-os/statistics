@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.text.TextUtils;
 
 import com.tcl.statisticsdk.util.CPUInfoUtils;
@@ -23,7 +24,7 @@ import java.util.HashMap;
  */
 public class DeviceBasicInfo {
 
-    private static final String TCL_STATISTICS_APP_KEY = "TCL_STATISTICS_APP_KEY";
+    private static final String TCL_STATISTICS_APP_KEY = "APP_KEY";
     private static final String TCL_CHANNEL = "CHANNEL";
 
     // AndroidId
@@ -67,10 +68,13 @@ public class DeviceBasicInfo {
     // 程序版本号
     private  static final int mVersionCode = 1;
     // 程序版本名称
-    private String mVersionName;
+    private String mAppVersionName;
+    private String mAppVersionCode;
+    private String mAppPackageName;
+    private String mAppLaunguage;
+    private String mAndroidSDKVersion;
     // 当前系统版本
-    private String mOsVersion;
-
+    private String mOsVersionName;
 
     // 唯一编号
     private static String mUUID = null;
@@ -85,6 +89,8 @@ public class DeviceBasicInfo {
     public static String mLaunchActivityName = null;
     public static HashMap<String, String> mConfigmap = new HashMap();
     private String mSDKVersion;
+    private String mAppKey;
+    private String mAndroidSDKRelease;
 
 
     private DeviceBasicInfo() {}
@@ -104,8 +110,8 @@ public class DeviceBasicInfo {
     private void init(Context context) {
 
         mContext = context.getApplicationContext();
-        this.mSDKVersion = android.os.Build.VERSION.SDK;
-        mOsVersion = android.os.Build.VERSION.RELEASE;
+        this.mSDKVersion = Build.VERSION.SDK;
+        mOsVersionName = android.os.Build.VERSION.RELEASE;
 
         mAndroidId = DeviceUtils.getAndroidId(mContext);
         mRom = android.os.Build.DISPLAY;
@@ -126,6 +132,15 @@ public class DeviceBasicInfo {
         mWidght = DeviceUtils.getWidth(mContext);
         mHeight = DeviceUtils.getHeight(mContext);
 
+        mAppVersionCode = DeviceUtils.getVersionCode(mContext);
+        mAppVersionName = DeviceUtils.getVersionName(mContext);
+        mAppPackageName = DeviceBasicInfo.getPackageName(mContext);
+        mAppLaunguage = DeviceUtils.getLocal(mContext);
+        mAndroidSDKVersion =  android.os.Build.VERSION.SDK_INT+"";
+        mAppKey = DeviceUtils.getAppKey(mContext);
+        mAndroidSDKRelease = Build.VERSION.RELEASE;
+
+
         // 序列号
         String serialno = DeviceUtils.getSerialNumber();
         // 合成的唯一编码
@@ -135,7 +150,6 @@ public class DeviceBasicInfo {
         if ((mUUID2 == null) || (mUUID2.equals(""))) {
             mUUID2 = "000000000000000";
         }
-
         getPackageInfo(context);
     }
 
@@ -197,18 +211,20 @@ public class DeviceBasicInfo {
      * @return
      */
     public String getAppkey(Context context) {
-        return getMetaData(context, "TCL_STATISTICS_APP_KEY");
+        return getMetaData(context, TCL_STATISTICS_APP_KEY);
     }
 
     public void setAppinfo(Context context, JSONObject appinfo) {
 
         init(context);
 
-        if ((!(TextUtils.isEmpty(this.mVersionName))) && (this.mVersionName.length() > 15))
+        if ((!(TextUtils.isEmpty(this.mAppVersionName))) && (this.mAppVersionName.length() > 15))
 
             throw new IllegalArgumentException(
                     "VersionName is too long , limit length is 15,Please modify your VersionName!!!");
         try {
+
+            String osvc = mSDKVersion+"|"+mAndroidSDKRelease;
 
             appinfo.put("ai", mAndroidId);
             appinfo.put("r", mRom);
@@ -229,6 +245,13 @@ public class DeviceBasicInfo {
             appinfo.put("h", mHeight);
             appinfo.put("w", mWidght);
             appinfo.put("sv", mVersionCode);
+            appinfo.put("vc",mAppVersionCode);
+            appinfo.put("vn",mAppVersionName);
+            appinfo.put("pn",mAppPackageName);
+            appinfo.put("la",mAppLaunguage);
+            appinfo.put("osvc",osvc);
+            appinfo.put("os","android");
+            appinfo.put("appkey",mAppKey);
 
 
         } catch (Exception localException) {

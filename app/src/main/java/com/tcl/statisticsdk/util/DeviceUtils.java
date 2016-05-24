@@ -3,6 +3,7 @@ package com.tcl.statisticsdk.util;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiInfo;
@@ -37,6 +38,7 @@ public class DeviceUtils {
     private final static int kSystemRootStateDisable = 0;
     private final static int kSystemRootStateEnable = 1;
     private static int systemRootState = kSystemRootStateUnknow;
+    public static final String APPKEY = "APP_KEY";
 
     /**
      * 判断是否手机是否ROOT
@@ -474,6 +476,40 @@ public class DeviceUtils {
         return versionCode;
     }
 
+
+    /**
+     * 得到APpKey
+     *
+     * @param context
+     * @return
+     */
+    public static String getAppKey(Context context) {
+
+        if(context == null){
+            return null;
+        }
+        return getMetaData(context.getApplicationContext(),APPKEY);
+    }
+
+
+    /**
+     * 
+     * @param context
+     * @param key
+     * @return
+     */
+    public static String getMetaData(Context context, String key) {
+        if (context == null) return "";
+        try {
+            PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            ApplicationInfo appInfo =
+                    context.getPackageManager().getApplicationInfo(info.packageName, PackageManager.GET_META_DATA);
+            return appInfo.metaData.getString(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 
 
 }

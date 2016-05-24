@@ -3,8 +3,11 @@ package com.tcl.statisticsdk.net;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+
+import com.orhanobut.logger.Logger;
 import com.tcl.statisticsdk.util.LogUtils;
 import com.tcl.statisticsdk.util.MetaUtils;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -14,7 +17,18 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.zip.GZIPOutputStream;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * 位置信息
@@ -30,15 +44,14 @@ public class StatisticsApi {
     private final static String SERVER_URL_CHINA = "http://gw.csp.cn.tclclouds.com/api/log";
     // 服务器URL for global
     private final static String SERVER_URL_GLOBAL = "https://gstest.udc.cn.tclclouds.com/api/device/log";
-
     static final String DOMAIN_GLOBAL = "global";
     static final String DOMAIN_CHINA = "china";
-
     private static String SERVER_URL = SERVER_URL_GLOBAL;
     private static String TEST_SERVLET_URL = "http://10.128.208.84:8088/StaServer/DataServlet";
 
     private static final Proxy a = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.0.0.172", 80));
     private static final Proxy b = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.0.0.200", 80));
+    private static final String HTTPS_TEST_SEVER = "https://gstest.udc.cn.tclclouds.com/api/device/log";
 
     /**
      * 发送日志
@@ -55,7 +68,9 @@ public class StatisticsApi {
 
             LogUtils.I("日志发送原始长度：" + json.length());
 
-            HttpURLConnection httpUrlConnection = getURLConnection(context, SERVER_URL, connectTimeout, readTimeout);
+//            HttpURLConnection httpUrlConnection = getURLConnection(context, "http://gstest.udc.cn.tclclouds.com/api/device/log", connectTimeout, readTimeout);
+            HttpURLConnection httpUrlConnection = getURLConnectionWithHttps(context, HTTPS_TEST_SEVER, connectTimeout, readTimeout);
+
             httpUrlConnection.setDoOutput(true);
             httpUrlConnection.setInstanceFollowRedirects(false);
             httpUrlConnection.setUseCaches(false);
@@ -71,7 +86,9 @@ public class StatisticsApi {
             BufferedReader bufferedReader = null;
 
             try {
-                bufferedWriter = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(httpUrlConnection.getOutputStream()), "UTF-8"));
+                bufferedWriter =
+                        new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(
+                                httpUrlConnection.getOutputStream()), "UTF-8"));
 
                 bufferedWriter.write(json);
                 // bufferedWriter.flush();
@@ -94,7 +111,8 @@ public class StatisticsApi {
                 if ((httpUrlConnection.getResponseCode() != 200)
                 // || (i != 0)
                 )
-                    throw new ClassNotFoundException("http code =" + httpUrlConnection.getResponseCode() + "& contentResponse=" + sb);
+                    throw new ClassNotFoundException("http code =" + httpUrlConnection.getResponseCode()
+                            + "& contentResponse=" + sb);
             } catch (IOException Exception) {
                 Exception.printStackTrace();
                 if (bufferedReader != null) {
@@ -180,4 +198,69 @@ public class StatisticsApi {
         }
         return httpURLConnection;
     }
+
+
+    public static HttpURLConnection getURLConnectionWithHttps(Context context, String urlStr, int connectTimeOut, int readTimeOut) throws NoSuchAlgorithmException, IOException,
+            KeyManagementException {
+
+        HttpURLConnection httpURLConnection = null;
+        URL url = new URL(HTTPS_TEST_SEVER);
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, new TrustManager[] {new TrustAllManager()}, null);
+        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+            @Override
+            public boolean verify(String arg0, SSLSession arg1) {
+                Logger.d("un verify!.......");
+                return true;
+            }
+        });
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo1 = connectivityManager.getNetworkInfo(0);
+        NetworkInfo networkInfo2 = connectivityManager.getNetworkInfo(1);
+
+        if ((networkInfo2 != null) && (networkInfo2.isAvailable())) {
+            LogUtils.D("WIFI is available");
+            httpURLConnection = (HttpURLConnection) url.openConnection();
+
+        } else if ((networkInfo1 != null) && (networkInfo1.isAvailable())) {
+            String str = networkInfo1.getExtraInfo();
+            if (str != null)
+                str = str.toLowerCase();
+            else {
+                str = "";
+            }
+            LogUtils.D("current APN:" + str);
+            if ((str.startsWith("cmwap")) || (str.startsWith("uniwap")) || (str.startsWith("3gwap")))
+                httpURLConnection = (HttpURLConnection) url.openConnection(a);
+            else if (str.startsWith("ctwap"))
+                httpURLConnection = (HttpURLConnection) url.openConnection(b);
+            else
+                httpURLConnection = (HttpURLConnection) url.openConnection();
+        } else {
+            LogUtils.D("getConnection:not wifi and mobile");
+            httpURLConnection = (HttpURLConnection) url.openConnection();
+        }
+        httpURLConnection.setConnectTimeout(connectTimeOut);
+        httpURLConnection.setReadTimeout(readTimeOut);
+
+        return httpURLConnection;
+    }
+
+    static class TrustAllManager implements X509TrustManager {
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+        }
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return null;
+        }
+    }
+
 }
