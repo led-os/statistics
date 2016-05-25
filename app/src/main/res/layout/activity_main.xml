@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.tcl.statisticsdk.MainActivity">
+    tools:context="com.tcl.statistics.client.MainActivity">
 
     <TextView
         android:id="@+id/tx_activity_one"

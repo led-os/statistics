@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.orhanobut.logger.Logger;
 import com.tcl.statisticsdk.util.LogUtils;
 import com.tcl.statisticsdk.util.MetaUtils;
 
@@ -29,6 +28,10 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
+//import com.orhanobut.logger.Logger;
+
+//import com.orhanobut.logger.Logger;
 
 /**
  * 位置信息
@@ -212,7 +215,7 @@ public class StatisticsApi {
         HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
             @Override
             public boolean verify(String arg0, SSLSession arg1) {
-                Logger.d("un verify!.......");
+//                Logger.d("un verify!.......");
                 return true;
             }
         });

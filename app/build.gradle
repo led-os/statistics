@@ -5,8 +5,8 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.tcl.statistics"
-        minSdkVersion 8
+        applicationId "com.tcl.statisticsdk.client"
+        minSdkVersion 9
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -23,14 +23,12 @@ android {
             dirs 'libs'
         }
     }
-
     useLibrary 'org.apache.http.legacy'
-
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile(name: 'logger-debug', ext: 'aar')
+    compile project(':statistics_sdk')
 }

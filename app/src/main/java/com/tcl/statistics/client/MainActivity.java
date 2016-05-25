@@ -1,12 +1,10 @@
-package com.tcl.statisticsdk;
+package com.tcl.statistics.client;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.tcl.statisticsdk.agent.StatisticsAgent;
-import com.tcl.statisticsdk.util.LogUtils;
+import com.tcl.statisticsdk.client.R;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -17,11 +15,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+
     }
 
     private void init() {
 
-        StatisticsAgent.setDebugMode(true);
+
         findViewById(R.id.btn_click_event).setOnClickListener(this);
         findViewById(R.id.btn_test_error).setOnClickListener(this);
         findViewById(R.id.btn_switch_page).setOnClickListener(this);
@@ -29,19 +28,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread thread, Throwable ex) {
-                LogUtils.D("uncatch Exception");
+                // com.tcl.statisticsdk.util.LogUtils.D("uncatch Exception");
 
             }
         });
-
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         // 页面onResume
-        StatisticsAgent.onResume(getApplicationContext());
+//         com.tcl.statisticsdk.agent.StatisticsAgent.onResume(getApplicationContext());
     }
 
 
@@ -49,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onPause() {
         super.onPause();
         // 页面onPause
-        StatisticsAgent.onPause(getApplicationContext());
+//         com.tcl.statisticsdk.agent.StatisticsAgent.onPause(getApplicationContext());
     }
 
 
@@ -57,25 +54,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         int id = v.getId();
 
-        switch (id) {
-            case R.id.btn_click_event:
-
-                StatisticsAgent.onEvent(getApplicationContext(), EVENT_NAME_1);
-
-                break;
-            case R.id.btn_switch_page_two:
-
-                Intent intent = new Intent();
-                intent.setClass(this, ActivityTwo.class);
-                startActivity(intent);
-
-                break;
-            case R.id.btn_test_error:
-
-                errorOccurs();
-
-                break;
-        }
+        // switch (id) {
+        // case R.id.btn_click_event:
+        // StatisticsAgent.onEvent(getApplicationContext(), EVENT_NAME_1);
+        // break;
+        // case R.id.btn_switch_page_two:
+        //
+        // Intent intent = new Intent();
+        // intent.setClass(this, ActivityTwo.class);
+        // startActivity(intent);
+        //
+        // break;
+        // case R.id.btn_test_error:
+        // errorOccurs();
+        // break;
+        // }
     }
 
     private void errorOccurs() {

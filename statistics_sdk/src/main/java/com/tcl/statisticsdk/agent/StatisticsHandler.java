@@ -7,7 +7,6 @@ import android.os.Message;
 import android.os.Process;
 import android.text.TextUtils;
 
-import com.orhanobut.logger.Logger;
 import com.tcl.statisticsdk.bean.EventItem;
 import com.tcl.statisticsdk.bean.ExceptionInfo;
 import com.tcl.statisticsdk.bean.PageInfo;
@@ -31,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+//import com.orhanobut.logger.Logger;
 
 
 /**
@@ -180,7 +181,7 @@ public class StatisticsHandler {
      */
     private static void catchException(Context context) {
         if (context != null) {
-            Logger.d("初始化异常捕获CrashHandler");
+//            Logger.d("初始化异常捕获CrashHandler");
             mContext = context.getApplicationContext();
             // 初始化异常记录器
             CrashHandler crashHandler = CrashHandler.getInstance();
@@ -366,7 +367,7 @@ public class StatisticsHandler {
         mCurrentPageInfo.setStartTime(StarTime);
         mPageInfos.add(mCurrentPageInfo);
         mCurrentClassName = className;
-        Logger.d(" 添加页面信息 class Name %s %d  当前内存中PageInfo数量: %d" , className,mStartTime,mPageInfos.size());
+//        Logger.d(" 添加页面信息 class Name %s %d  当前内存中PageInfo数量: %d" , className,mStartTime,mPageInfos.size());
     }
 
 
@@ -618,7 +619,7 @@ public class StatisticsHandler {
         LogUtils.D("上报结果:" + result);
         sendResult = result;
 
-        Logger.json(reportData.toString());
+//        Logger.json(reportData.toString());
 
         return sendResult;
     }

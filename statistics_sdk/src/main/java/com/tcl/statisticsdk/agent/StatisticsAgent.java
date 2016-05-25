@@ -3,7 +3,6 @@ package com.tcl.statisticsdk.agent;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.orhanobut.logger.Logger;
 import com.tcl.statisticsdk.bean.EventItem;
 import com.tcl.statisticsdk.util.CheckUtils;
 import com.tcl.statisticsdk.util.LogUtils;
@@ -11,12 +10,16 @@ import com.tcl.statisticsdk.util.LogUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+//import com.orhanobut.logger.Logger;
+
+//import com.orhanobut.logger.Logger;
+
 public class StatisticsAgent {
     private static boolean mInitCatchException = false;
 
     static {
         mInitCatchException = false;
-        Logger.init("tyler.tang");
+//        Logger.init("tyler.tang");
     }
 
     public static synchronized void onResume(Context context) {
@@ -99,7 +102,7 @@ public class StatisticsAgent {
     private static void initExceptionCatcher(Context context) {
         synchronized (StatisticsAgent.class) {
             if (!(mInitCatchException)) {
-                Logger.d("发送始化异常捕获器的");
+//                Logger.d("发送始化异常捕获器的");
 //                StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_CATCH_EXCEPTION, context);
                 mInitCatchException = true;
             }

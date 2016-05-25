@@ -2,12 +2,13 @@ package com.tcl.statisticsdk.util;
 
 import android.content.Context;
 
-import com.orhanobut.logger.Logger;
 import com.tcl.statisticsdk.agent.StatisticsHandler;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+
+//import com.orhanobut.logger.Logger;
 
 /**
  * 处理错误异常的handler
@@ -37,7 +38,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     public void init(Context context) {
         this.mContext = context;
         Thread.setDefaultUncaughtExceptionHandler(this);
-        Logger.d(" Thread.setDefaultUncaughtExceptionHandler(this);");
+//        Logger.d(" Thread.setDefaultUncaughtExceptionHandler(this);");
     }
 
 
@@ -48,7 +49,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      * @param ex
      */
     public void uncaughtException(Thread thread, Throwable ex) {
-        Logger.d("系统异常没有被捕获!");
+//        Logger.d("系统异常没有被捕获!");
         //handleException(thread, ex);
     }
 

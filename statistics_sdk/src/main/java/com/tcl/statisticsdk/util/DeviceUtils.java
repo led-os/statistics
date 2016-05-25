@@ -135,7 +135,7 @@ public class DeviceUtils {
             // 检查用户是否通过此权限
             String permission = android.Manifest.permission.READ_PHONE_STATE;
 
-            if (PermissionUtil.hanPermission(context, permission)) {
+            if (com.tcl.statisticsdk.util.PermissionUtil.hanPermission(context, permission)) {
                 imea = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
                 return imea;
             } else {
@@ -423,7 +423,7 @@ public class DeviceUtils {
             Class c = Class.forName("android.os.SystemProperties");
             Method get = c.getMethod("get", new Class[] {String.class});
             serial = (String) get.invoke(c, new Object[] {"ro.serialno"});
-            LogUtils.D("serialNumber:" + serial);
+            com.tcl.statisticsdk.util.LogUtils.D("serialNumber:" + serial);
         } catch (Exception c) {}
         return serial;
     }
