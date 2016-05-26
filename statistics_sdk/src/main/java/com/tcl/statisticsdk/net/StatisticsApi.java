@@ -71,8 +71,8 @@ public class StatisticsApi {
 
             LogUtils.I("日志发送原始长度：" + json.length());
 
-//            HttpURLConnection httpUrlConnection = getURLConnection(context, "http://gstest.udc.cn.tclclouds.com/api/device/log", connectTimeout, readTimeout);
-            HttpURLConnection httpUrlConnection = getURLConnectionWithHttps(context, HTTPS_TEST_SEVER, connectTimeout, readTimeout);
+            HttpURLConnection httpUrlConnection = getURLConnection(context, "http://gstest.udc.cn.tclclouds.com/api/device/log", connectTimeout, readTimeout);
+//            HttpURLConnection httpUrlConnection = getURLConnectionWithHttps(context, HTTPS_TEST_SEVER, connectTimeout, readTimeout);
 
             httpUrlConnection.setDoOutput(true);
             httpUrlConnection.setInstanceFollowRedirects(false);
@@ -114,8 +114,7 @@ public class StatisticsApi {
                 if ((httpUrlConnection.getResponseCode() != 200)
                 // || (i != 0)
                 )
-                    throw new ClassNotFoundException("http code =" + httpUrlConnection.getResponseCode()
-                            + "& contentResponse=" + sb);
+                    throw new ClassNotFoundException("http code =" + httpUrlConnection.getResponseCode() + "& contentResponse=" + sb);
             } catch (IOException Exception) {
                 Exception.printStackTrace();
                 if (bufferedReader != null) {

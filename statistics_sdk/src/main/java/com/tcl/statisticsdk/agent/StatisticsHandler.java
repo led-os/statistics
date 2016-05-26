@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//import com.orhanobut.logger.Logger;
+// import com.orhanobut.logger.Logger;
 
 
 /**
@@ -88,6 +88,24 @@ public class StatisticsHandler {
     private boolean isSendLog = false;
     private boolean isResume = false;
 
+
+
+    public String getFileInstoreMessage() {
+
+        StatisticsResult resultObj = fetchStatisticsResultFromFile();
+        return  convertStatisticResultToJson(resultObj);
+
+    }
+
+    public String getMemInstoreMessage() {
+
+        String result = "";
+
+
+        return result;
+    }
+
+
     public static StatisticsHandler getInstance() {
         return mInstance;
     }
@@ -143,7 +161,7 @@ public class StatisticsHandler {
                     break;
                 case WHAT_ON_CATCH_EXCEPTION:
                     if (obj != null) {
-//                        catchException((Context) obj);
+                        // catchException((Context) obj);
                     }
                     break;
                 case WHAT_SEND_LOG:
@@ -181,7 +199,7 @@ public class StatisticsHandler {
      */
     private static void catchException(Context context) {
         if (context != null) {
-//            Logger.d("初始化异常捕获CrashHandler");
+            // Logger.d("初始化异常捕获CrashHandler");
             mContext = context.getApplicationContext();
             // 初始化异常记录器
             CrashHandler crashHandler = CrashHandler.getInstance();
@@ -295,6 +313,7 @@ public class StatisticsHandler {
         }
     }
 
+
     /**
      * 进入Activity页面
      *
@@ -367,7 +386,8 @@ public class StatisticsHandler {
         mCurrentPageInfo.setStartTime(StarTime);
         mPageInfos.add(mCurrentPageInfo);
         mCurrentClassName = className;
-//        Logger.d(" 添加页面信息 class Name %s %d  当前内存中PageInfo数量: %d" , className,mStartTime,mPageInfos.size());
+        // Logger.d(" 添加页面信息 class Name %s %d  当前内存中PageInfo数量: %d" ,
+        // className,mStartTime,mPageInfos.size());
     }
 
 
@@ -453,8 +473,8 @@ public class StatisticsHandler {
 
     public void onErrorExit() {
         ExceptionInfo exceptionInfo = new ExceptionInfo();
-//        exceptionInfo.setExceptionMessage(mExceptionMessage);
-//        exceptionInfo.setExceptionCause(mExcetpionCause);
+        // exceptionInfo.setExceptionMessage(mExceptionMessage);
+        // exceptionInfo.setExceptionCause(mExcetpionCause);
         exceptionInfo.setExcetpionTime(System.currentTimeMillis());
         if (mContext != null) {
             exceptionInfo.setAppVersion(DeviceUtils.getVersionName(mContext));
@@ -462,8 +482,8 @@ public class StatisticsHandler {
         mStatisticsItem.setExceptionInfo(exceptionInfo);
         // 保存退出的时间
         mStatisticsResult.setEndTime(System.currentTimeMillis());
-//        saveStatisticsResult();
-//         System.exit(1);
+        // saveStatisticsResult();
+        // System.exit(1);
     }
 
     public void onKillProcess() {
@@ -523,10 +543,10 @@ public class StatisticsHandler {
                 // 封装要上传的Sesion 访问次数信息
                 sessionStat.put("s", statisticsResult.getStartTime());
                 sessionStat.put("e", statisticsResult.getEndTime());
-//                sessionStat.put("vc", vertionCode);
-//                sessionStat.put("vn", vertionName);
-//                sessionStat.put("pn", packageName);
-//                sessionStat.put("la", launguage);
+                // sessionStat.put("vc", vertionCode);
+                // sessionStat.put("vn", vertionName);
+                // sessionStat.put("pn", packageName);
+                // sessionStat.put("la", launguage);
 
                 /* 封装要上传的单个页面访问信息 */
                 JSONArray pages = new JSONArray();
@@ -619,7 +639,7 @@ public class StatisticsHandler {
         LogUtils.D("上报结果:" + result);
         sendResult = result;
 
-//        Logger.json(reportData.toString());
+        // Logger.json(reportData.toString());
 
         return sendResult;
     }

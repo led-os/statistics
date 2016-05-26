@@ -2,12 +2,19 @@
 
     <string name="app_name">统计SDK客户端</string>
     <string name="client_event">模拟事件触发</string>
-    <string name="forward">模拟跳装页面</string>
+    <string name="client_event_params">模拟事件触发带参数</string>
+    <string name="forward">模拟跳转页面Activity</string>
+    <string name="forward_fragment">模拟跳转页面Fragment</string>
     <string name="activity_one">我是页面一</string>
     <string name="test_error">异常测试</string>
 
-
     <string name="activity_two">我是页面二</string>
     <string name="activity_two_client_event">模拟事件触发</string>
+
+    <string name="content">
+       当前存储在文件里面的内容 !
+    </string>
+
+    <string name="clean">清空操作日志</string>
 
 </resources>
