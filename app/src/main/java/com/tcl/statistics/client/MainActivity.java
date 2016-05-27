@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
@@ -13,7 +14,15 @@ import com.tcl.statisticsdk.agent.StatisticsAgent;
 import com.tcl.statisticsdk.agent.StatisticsHandler;
 import com.tcl.statisticsdk.client.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private static final int JSON_INDENT = 4;
 
     public static final String EVENT_NAME_1 = "MAINACTIVITY_CLICK_BTN";
     HandlerThread mHandlerThread;
@@ -34,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.btn_click_event).setOnClickListener(this);
         findViewById(R.id.btn_test_error).setOnClickListener(this);
         findViewById(R.id.btn_switch_page).setOnClickListener(this);
+        findViewById(R.id.btn_click_event_params).setOnClickListener(this);
+
         mText = (EditText) findViewById(R.id.editText);
 
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
@@ -42,13 +53,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // com.tcl.statisticsdk.util.LogUtils.D("uncatch Exception");
             }
         });
-
         // init thread
         // mHandlerThread = new HandlerThread("resolveLongThindThread");
         // mHandlerThread.start();
-
         mHandler = new Handler(getMainLooper(), new HandlerCallBack());
-
     }
 
     @Override
@@ -86,25 +94,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-
     @Override
     public void onClick(View v) {
         int id = v.getId();
 
         switch (id) {
+        // 模拟事件
             case R.id.btn_click_event:
                 StatisticsAgent.onEvent(getApplicationContext(), EVENT_NAME_1);
                 break;
-            case R.id.btn_switch_page_two:
+            // 模拟跳转Activity
+            case R.id.btn_switch_page:
 
                 Intent intent = new Intent();
                 intent.setClass(this, ActivityTwo.class);
                 startActivity(intent);
-
                 break;
+            //模拟异常
             case R.id.btn_test_error:
                 errorOccurs();
                 break;
+            //模拟带参数的事件
+            case R.id.btn_click_event_params:
+                eventParams();
+                break;
+            //模以跳转Fragment
         }
     }
 
@@ -125,9 +139,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     * 
-     */
     class HandlerCallBack implements Handler.Callback {
 
         @Override
@@ -141,10 +152,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             switch (what) {
                 case WHAT_LOAD_MESSAGE:
                     if (msg.obj instanceof String) {
-
-                        String result = "current file message is : ";
-                        result += msg.obj.toString();
-                        mText.setText(result);
+                        show(msg.obj.toString());
                     }
                     break;
                 default:
@@ -153,4 +161,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return false;
         };
     }
+
+
+    private void eventParams() {
+        HashMap<String, String> params = new HashMap<>();
+
+        params.put("key_1", "true");
+        params.put("key_2", "1024");
+        params.put("key_3", "key 3 value");
+
+        String event_name = "BTN_EVENT_PARAMS";
+        StatisticsAgent.onEvent(getApplicationContext(), event_name, params);
+    }
+
+
+    private void show(String json) {
+        if (TextUtils.isEmpty(json)) {
+            return;
+        }
+        try {
+            json = json.trim();
+            String contents = getResources().getString(R.string.content);
+            if (json.startsWith("{")) {
+                JSONObject jsonObject = new JSONObject(json);
+                String message = jsonObject.toString(JSON_INDENT);
+                mText.setText(contents + "\n" + message);
+                return;
+            }
+            if (json.startsWith("[")) {
+                JSONArray jsonArray = new JSONArray(json);
+                String message = jsonArray.toString(JSON_INDENT);
+                mText.setText(contents + "\n" + message);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void forwardToFragment(){
+
+
+
+    }
+
 }

@@ -2,15 +2,11 @@ package com.tcl.statisticsdk.util;
 
 import android.content.Context;
 import android.text.TextUtils;
-import com.tcl.statisticsdk.bean.EventItem;
-import com.tcl.statisticsdk.bean.ExceptionInfo;
-import com.tcl.statisticsdk.bean.PageInfo;
-import com.tcl.statisticsdk.bean.StatisticsItem;
+
+import com.tcl.statisticsdk.agent.StatisticsHandler;
 import com.tcl.statisticsdk.bean.StatisticsResult;
 import com.tcl.statisticsdk.systeminfo.DeviceBasicInfo;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -19,10 +15,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.StreamCorruptedException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 完成对对像的序列化
@@ -168,98 +161,7 @@ public class FileSerializableUtils {
             LogUtils.E("appKey is null or appKey is wrong,check your config");
             return null;
         }
-        boolean sendResult = false;
-
-
-        JSONObject reportData = new JSONObject();
-        JSONArray pageStatArray = new JSONArray();
-        JSONArray eventArray = new JSONArray();
-        JSONArray exceptionArray = new JSONArray();
-
-        ArrayList<StatisticsItem> statisticItems = statisticsResult.getStatisticItems();
-        for (StatisticsItem item : statisticItems) {
-
-            try {
-                JSONObject pageStat = new JSONObject();
-                pageStat.put("e", statisticsResult.getEndTime());
-                pageStat.put("s", statisticsResult.getStartTime());
-                pageStat.put("i", System.currentTimeMillis());
-                pageStat.put("c", statisticItems.size());
-                JSONArray pages = new JSONArray();
-                for (PageInfo pageTimeCalculateTool : item.getPageInfos()) {
-                    JSONObject page = new JSONObject();
-                    page.put("n", pageTimeCalculateTool.getPageName());
-                    // page.put("d", pageTimeCalculateTool.getScanTime());
-                    page.put("ps", 0);
-                    pages.put(page);
-                }
-                ExceptionInfo exceptionInfo = item.getExceptionInfo();
-                if (exceptionInfo != null) {
-                    JSONObject exception = new JSONObject();
-                    exception.put("c", exceptionInfo.getExceptionMessage());
-                    exception.put("v", exceptionInfo.getAppVersion());
-                    exception.put("y", exceptionInfo.getExceptionCause());
-                    exception.put("t", exceptionInfo.getExcetpionTime());
-                    exceptionArray.put(exception);
-                }
-                pageStat.put("p", pages);
-                pageStatArray.put(pageStat);
-            } catch (Exception e) {
-                sendResult = false;
-                return null;
-            }
-        }
-
-        try {
-            // 无参数的事件
-            List<EventItem> noParamEvents = statisticsResult.getNoParamEvents();
-            for (EventItem eventItem : noParamEvents) {
-                JSONObject event = new JSONObject();
-                event.put("d", eventItem.getEventValue());
-                event.put("t", eventItem.getStartTime());
-                // event.put("s", eventItem.getHappenTime());
-                event.put("c", eventItem.getCount());
-                event.put("i", eventItem.getEventName());
-                event.put("p", new JSONArray());
-                eventArray.put(event);
-            }
-            // 带参数的事件
-            List<EventItem> hasParamEvents = statisticsResult.getHasParamEvents();
-            for (EventItem eventItem : hasParamEvents) {
-                JSONObject event = new JSONObject();
-                event.put("d", eventItem.getEventValue());
-                event.put("t", eventItem.getStartTime());
-                // event.put("s", eventItem.getHappenTime());
-                event.put("c", eventItem.getCount());
-                event.put("i", eventItem.getEventName());
-
-                if (eventItem.getEventParamMap() != null && eventItem.getEventParamMap().size() > 0) {
-                    JSONArray eventParamArray = new JSONArray();
-                    for (Map.Entry<String, String> eventParamEntry : eventItem.getEventParamMap().entrySet()) {
-                        JSONObject eventParam = new JSONObject();
-                        eventParam.put("k", eventParamEntry.getKey());
-                        eventParam.put("v", eventParamEntry.getValue());
-                        eventParamArray.put(eventParam);
-                    }
-                    event.put("p", eventParamArray);
-                }
-                eventArray.put(event);
-            }
-
-            reportData.put("pr", pageStatArray);
-            reportData.put("ex", exceptionArray);
-            reportData.put("ev", eventArray);
-
-            JSONObject appinfo = new JSONObject();
-            DeviceBasicInfo.getInstance().setAppinfo(mContext, appinfo);
-            reportData.put("he", appinfo);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            sendResult = false;
-            return null;
-        }
-        return reportData.toString();
+        return  StatisticsHandler.getInstance().convertStatisticResultToJson(statisticsResult);
     }
 
 }

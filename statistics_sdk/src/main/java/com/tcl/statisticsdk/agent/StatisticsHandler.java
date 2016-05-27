@@ -93,7 +93,7 @@ public class StatisticsHandler {
     public String getFileInstoreMessage() {
 
         StatisticsResult resultObj = fetchStatisticsResultFromFile();
-        return  convertStatisticResultToJson(resultObj);
+        return convertStatisticResultToJson(resultObj);
 
     }
 
@@ -331,6 +331,7 @@ public class StatisticsHandler {
             return;
         }
         isResume = true;
+
         if (System.currentTimeMillis() - mExitTime > StatisticsConfig.getSessionTimeOut(mContext)) {
             // 距离之前离开页面超过Session时间
             mStartTime = System.currentTimeMillis();
@@ -370,7 +371,6 @@ public class StatisticsHandler {
 
         } else if (convertStatisticResultToJson(mStatisticsResult).length() > DATA_MAX_SIZE) {
             // 大于数据最大值，则将数据存储为昨天文件，并创建新文件存储之后的数据 ，形成了一个历史文件 --TODO 如果一直往昨天的日志里面去加那么昨天的也会超过这个值
-
             LogUtils.E("data is full");
             saveStatisticsResultToHistoryFile();
             deleteTodayCacheFile();
@@ -523,127 +523,18 @@ public class StatisticsHandler {
 
         LogUtils.D("net enable");
         boolean sendResult = false;
+        String reportData = null;
 
-        JSONObject reportData = new JSONObject();
-        JSONArray pageStatArray = new JSONArray();
-        JSONArray eventArray = new JSONArray();
-        JSONArray exceptionArray = new JSONArray();
-        ArrayList<StatisticsItem> statisticItems = statisticsResult.getStatisticItems();
+        reportData = convertStatisticResultToJson(statisticsResult);
 
-        String vertionCode = DeviceUtils.getVersionCode(mContext);
-        String vertionName = DeviceUtils.getVersionName(mContext);
-        String packageName = DeviceBasicInfo.getPackageName(mContext);
-        String launguage = DeviceUtils.getLocal(mContext);
-
-        for (StatisticsItem item : statisticItems) {
-
-            try {
-                JSONObject sessionStat = new JSONObject();
-
-                // 封装要上传的Sesion 访问次数信息
-                sessionStat.put("s", statisticsResult.getStartTime());
-                sessionStat.put("e", statisticsResult.getEndTime());
-                // sessionStat.put("vc", vertionCode);
-                // sessionStat.put("vn", vertionName);
-                // sessionStat.put("pn", packageName);
-                // sessionStat.put("la", launguage);
-
-                /* 封装要上传的单个页面访问信息 */
-                JSONArray pages = new JSONArray();
-
-                for (PageInfo pageTmp : item.getPageInfos()) {
-
-                    JSONObject page = new JSONObject();
-
-                    page.put("n", pageTmp.getPageName());
-                    page.put("s", pageTmp.getStartTime());
-                    page.put("e", pageTmp.getEndTime());
-
-                    pages.put(page);
-                }
-
-                ExceptionInfo exceptionInfo = item.getExceptionInfo();
-
-                /** Exception的信息要重新组织吗? --TODO **/
-                if (exceptionInfo != null) {
-
-                    JSONObject exception = new JSONObject();
-                    exception.put("m", exceptionInfo.getExceptionMessage());
-                    exception.put("c", exceptionInfo.getExceptionCause());
-                    exception.put("vc", vertionCode);
-                    exception.put("vn", vertionName);
-                    exception.put("t", exceptionInfo.getExcetpionTime());
-
-                    exceptionArray.put(exception);
-                }
-                sessionStat.put("pg", pages);
-                pageStatArray.put(sessionStat);
-
-            } catch (Exception e) {
-                sendResult = false;
-                return sendResult;
-            }
-        }
-
-        try {
-            // 无参数的事件
-            List<EventItem> noParamEvents = statisticsResult.getNoParamEvents();
-            for (EventItem eventItem : noParamEvents) {
-                JSONObject event = new JSONObject();
-
-                event.put("t", eventItem.getStartTime());
-                event.put("d", eventItem.getEventValue());
-                event.put("c", eventItem.getEventName());
-                event.put("i", eventItem.getEventExtrInfo());
-                eventArray.put(event);
-            }
-            // 带参数的事件
-            List<EventItem> hasParamEvents = statisticsResult.getHasParamEvents();
-            for (EventItem eventItem : hasParamEvents) {
-                JSONObject event = new JSONObject();
-
-                event.put("t", eventItem.getStartTime());
-                event.put("d", eventItem.getEventValue());
-                event.put("c", eventItem.getEventName());
-                event.put("i", eventItem.getEventExtrInfo());
-
-                if (eventItem.getEventParamMap() != null && eventItem.getEventParamMap().size() > 0) {
-                    JSONArray eventParamArray = new JSONArray();
-                    for (Map.Entry<String, String> eventParamEntry : eventItem.getEventParamMap().entrySet()) {
-                        JSONObject eventParam = new JSONObject();
-                        eventParam.put("k", eventParamEntry.getKey());
-                        eventParam.put("v", eventParamEntry.getValue());
-                        eventParamArray.put(eventParam);
-                    }
-                    event.put("p", eventParamArray);
-                }
-                eventArray.put(event);
-            }
-
-            reportData.put("se", pageStatArray);
-            reportData.put("ex", exceptionArray);
-            reportData.put("ev", eventArray);
-
-            JSONObject appinfo = new JSONObject();
-            DeviceBasicInfo.getInstance().setAppinfo(mContext, appinfo);
-            reportData.put("us", appinfo);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            sendResult = false;
-            return sendResult;
-        }
         LogUtils.D("上报消息长度:" + reportData.toString().length() + "\n消息：" + reportData.toString());
         // 联网上报成功，清空上报内容
-        boolean result = StatisticsApi.sendLog(mContext, reportData.toString(), 30 * 1000, 30 * 1000);
-        LogUtils.D("上报结果:" + result);
-        sendResult = result;
+        sendResult = StatisticsApi.sendLog(mContext, reportData.toString(), 30 * 1000, 30 * 1000);
 
-        // Logger.json(reportData.toString());
+        LogUtils.D("上报结果:" + sendResult);
 
         return sendResult;
     }
-
 
     private void sendLog() {
         if (isSendLog == false) {
@@ -677,63 +568,72 @@ public class StatisticsHandler {
         }
     }
 
-    private String convertStatisticResultToJson(StatisticsResult statisticsResult) {
+    public String convertStatisticResultToJson(StatisticsResult statisticsResult) {
+
+        String result = null;
         JSONObject reportData = new JSONObject();
         JSONArray pageStatArray = new JSONArray();
         JSONArray eventArray = new JSONArray();
         JSONArray exceptionArray = new JSONArray();
-
         ArrayList<StatisticsItem> statisticItems = statisticsResult.getStatisticItems();
-        for (StatisticsItem item : statisticItems) {
 
-            try {
-                JSONObject pageStat = new JSONObject();
-                pageStat.put("e", statisticsResult.getEndTime());
-                pageStat.put("s", statisticsResult.getStartTime());
-                pageStat.put("i", System.currentTimeMillis());
-                pageStat.put("c", statisticItems.size());
+        try {
+            for (StatisticsItem item : statisticItems) {
+                JSONObject sessionStat = new JSONObject();
+
+                // 封装要上传的Sesion 访问次数信息
+                sessionStat.put("s", statisticsResult.getStartTime());
+                sessionStat.put("e", statisticsResult.getEndTime());
+
+                /* 封装要上传的单个页面访问信息 */
                 JSONArray pages = new JSONArray();
-                for (PageInfo pageTimeCalculateTool : item.getPageInfos()) {
+
+                for (PageInfo pageTmp : item.getPageInfos()) {
+
                     JSONObject page = new JSONObject();
-                    page.put("n", pageTimeCalculateTool.getPageName());
-                    // page.put("d", pageTimeCalculateTool.getScanTime());
-                    page.put("ps", 0);
+
+                    page.put("n", pageTmp.getPageName());
+                    page.put("s", pageTmp.getStartTime());
+                    page.put("e", pageTmp.getEndTime());
+
                     pages.put(page);
                 }
                 ExceptionInfo exceptionInfo = item.getExceptionInfo();
+
+                /** Exception的信息要重新组织吗? --TODO **/
                 if (exceptionInfo != null) {
+
                     JSONObject exception = new JSONObject();
-                    exception.put("c", exceptionInfo.getExceptionMessage());
-                    exception.put("v", exceptionInfo.getAppVersion());
-                    exception.put("y", exceptionInfo.getExceptionCause());
+                    exception.put("m", exceptionInfo.getExceptionMessage());
+                    exception.put("c", exceptionInfo.getExceptionCause());
                     exception.put("t", exceptionInfo.getExcetpionTime());
+
                     exceptionArray.put(exception);
                 }
-                pageStat.put("p", pages);
-                pageStatArray.put(pageStat);
-            } catch (Exception e) {}
-        }
+                sessionStat.put("pg", pages);
+                pageStatArray.put(sessionStat);
+            }
 
-        try {
             // 无参数的事件
             List<EventItem> noParamEvents = statisticsResult.getNoParamEvents();
             for (EventItem eventItem : noParamEvents) {
                 JSONObject event = new JSONObject();
-                event.put("d", eventItem.getEventValue());
+
                 event.put("t", eventItem.getStartTime());
-                event.put("c", eventItem.getCount());
-                event.put("i", eventItem.getEventName());
-                event.put("p", new JSONArray());
+                event.put("d", eventItem.getEventValue());
+                event.put("c", eventItem.getEventName());
+                event.put("i", eventItem.getEventExtrInfo());
                 eventArray.put(event);
             }
             // 带参数的事件
             List<EventItem> hasParamEvents = statisticsResult.getHasParamEvents();
             for (EventItem eventItem : hasParamEvents) {
                 JSONObject event = new JSONObject();
-                event.put("d", eventItem.getEventValue());
+
                 event.put("t", eventItem.getStartTime());
-                event.put("c", eventItem.getCount());
-                event.put("i", eventItem.getEventName());
+                event.put("d", eventItem.getEventValue());
+                event.put("c", eventItem.getEventName());
+                event.put("i", eventItem.getEventExtrInfo());
 
                 if (eventItem.getEventParamMap() != null && eventItem.getEventParamMap().size() > 0) {
                     JSONArray eventParamArray = new JSONArray();
@@ -743,22 +643,24 @@ public class StatisticsHandler {
                         eventParam.put("v", eventParamEntry.getValue());
                         eventParamArray.put(eventParam);
                     }
-                    event.put("p", eventParamArray);
+                    event.put("i", eventParamArray);
                 }
                 eventArray.put(event);
             }
 
-            reportData.put("pr", pageStatArray);
+            reportData.put("se", pageStatArray);
             reportData.put("ex", exceptionArray);
             reportData.put("ev", eventArray);
 
             JSONObject appinfo = new JSONObject();
             DeviceBasicInfo.getInstance().setAppinfo(mContext, appinfo);
-            reportData.put("he", appinfo);
+            reportData.put("us", appinfo);
         } catch (JSONException e) {
             e.printStackTrace();
+            return "";
         }
-        return reportData.toString();
+        result = reportData.toString();
+        return result;
     }
 
     /**

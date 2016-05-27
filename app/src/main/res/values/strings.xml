@@ -12,9 +12,11 @@
     <string name="activity_two_client_event">模拟事件触发</string>
 
     <string name="content">
-       当前存储在文件里面的内容 !
+       当前存储在文件里面的内容!
     </string>
 
     <string name="clean">清空操作日志</string>
+
+
 
 </resources>

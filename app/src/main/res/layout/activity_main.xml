@@ -8,7 +8,8 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp">
 
         <Button
             android:id="@+id/btn_click_event"
@@ -48,13 +49,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="@string/test_error" />
+        android:text="@string/test_error"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/btn_clean"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/clean" />
+        android:text="@string/clean"
+        android:visibility="gone"/>
 
     <EditText
         android:id="@+id/editText"
@@ -64,6 +67,5 @@
         android:editable="false"
         android:scrollbarStyle="outsideOverlay"
         android:text="@string/content" />
-
 
 </LinearLayout>
