@@ -22,13 +22,15 @@
             android:id="@+id/btn_click_event_params"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:text="@string/client_event_params" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
 
         <Button
             android:id="@+id/btn_switch_page"
@@ -40,6 +42,7 @@
             android:id="@+id/btn_switch_fragment_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:text="@string/forward_fragment" />
 
     </LinearLayout>

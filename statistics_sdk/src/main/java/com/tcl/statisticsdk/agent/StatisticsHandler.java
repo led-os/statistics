@@ -91,7 +91,6 @@ public class StatisticsHandler {
 
 
     public String getFileInstoreMessage() {
-
         StatisticsResult resultObj = fetchStatisticsResultFromFile();
         return convertStatisticResultToJson(resultObj);
 

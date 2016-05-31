@@ -119,9 +119,7 @@ public class FileSerializableUtils {
                     e.printStackTrace();
                 }
             }
-
         }
-
         return historyLogs;
     }
 
