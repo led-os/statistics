@@ -53,8 +53,7 @@ public class StatisticsApi {
 
     private static final Proxy a = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.0.0.172", 80));
     private static final Proxy b = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.0.0.200", 80));
-    private static final String HTTPS_TEST_SEVER = "https://gstest.udc.cn.tclclouds.com/api/device/log";
-    private static final String HTTPS_TEST_SEVER_TWO = "https://gstest.udc.cn.tclclouds.com/api/gs/log";
+    private static final String HTTPS_TEST_SEVER = "https://gstest.udc.cn.tclclouds.com/api/gs/log";
 
     /**
      * 发送日志
@@ -139,9 +138,9 @@ public class StatisticsApi {
     private static void initServerUrl(Context context) {
         String serverDomain = MetaUtils.getServerDomain(context);
         if (DOMAIN_GLOBAL.equalsIgnoreCase(serverDomain))
-            SERVER_URL = SERVER_URL_GLOBAL;
+            SERVER_URL = HTTPS_TEST_SEVER;
         else if (DOMAIN_CHINA.equalsIgnoreCase(serverDomain))
-            SERVER_URL = SERVER_URL_CHINA;
+            SERVER_URL = HTTPS_TEST_SEVER;
         else
             throw new RuntimeException("you should set your Server URL in your AndroidManifest.xml");
     }
