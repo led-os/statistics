@@ -496,7 +496,7 @@ public class StatisticsHandler {
         if (TextUtils.isEmpty(packageName)) {
             return className;
         }
-        className = className.substring(packageName.length() + 1);
+        className = className.substring(packageName.length()-1);
         return className;
     }
 

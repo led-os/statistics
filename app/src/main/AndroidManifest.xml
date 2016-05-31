@@ -27,6 +27,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="com.tcl.statistics.client.FragmentTest"></activity>
+
         <meta-data
             android:name="CHANNEL"
             android:value="china_tecent_201" />
@@ -40,7 +42,6 @@
         <meta-data
             android:name="UPLOAD_DATA_INTERVAL"
             android:value="90" />
-
         <activity android:name="com.tcl.statistics.client.ActivityTwo"></activity>
 
     </application>

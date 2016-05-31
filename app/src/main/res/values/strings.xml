@@ -17,6 +17,9 @@
 
     <string name="clean">清空操作日志</string>
 
+    <string name="fragment_1">fragment_1</string>
+    <string name="fragment_2">fragment_2</string>
+    <string name="fragment_3">fragment_3</string>
 
 
 </resources>

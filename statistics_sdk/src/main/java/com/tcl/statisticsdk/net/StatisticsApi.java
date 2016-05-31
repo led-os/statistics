@@ -50,11 +50,11 @@ public class StatisticsApi {
     static final String DOMAIN_GLOBAL = "global";
     static final String DOMAIN_CHINA = "china";
     private static String SERVER_URL = SERVER_URL_GLOBAL;
-    private static String TEST_SERVLET_URL = "http://10.128.208.84:8088/StaServer/DataServlet";
 
     private static final Proxy a = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.0.0.172", 80));
     private static final Proxy b = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.0.0.200", 80));
     private static final String HTTPS_TEST_SEVER = "https://gstest.udc.cn.tclclouds.com/api/device/log";
+    private static final String HTTPS_TEST_SEVER_TWO = "https://gstest.udc.cn.tclclouds.com/api/gs/log";
 
     /**
      * 发送日志
@@ -71,8 +71,8 @@ public class StatisticsApi {
 
             LogUtils.I("日志发送原始长度：" + json.length());
 
-            HttpURLConnection httpUrlConnection = getURLConnection(context, "http://gstest.udc.cn.tclclouds.com/api/device/log", connectTimeout, readTimeout);
-//            HttpURLConnection httpUrlConnection = getURLConnectionWithHttps(context, HTTPS_TEST_SEVER, connectTimeout, readTimeout);
+//            HttpURLConnection httpUrlConnection = getURLConnection(context, "http://gstest.udc.cn.tclclouds.com/api/device/log", connectTimeout, readTimeout);
+            HttpURLConnection httpUrlConnection = getURLConnectionWithHttps(context, "https://gstest.udc.cn.tclclouds.com/api/gs/log", connectTimeout, readTimeout);
 
             httpUrlConnection.setDoOutput(true);
             httpUrlConnection.setInstanceFollowRedirects(false);

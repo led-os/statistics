@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.btn_test_error).setOnClickListener(this);
         findViewById(R.id.btn_switch_page).setOnClickListener(this);
         findViewById(R.id.btn_click_event_params).setOnClickListener(this);
+        findViewById(R.id.btn_switch_fragment_page).setOnClickListener(this);
+
 
         mText = (EditText) findViewById(R.id.editText);
 
@@ -63,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
         // 页面onResume
-        com.tcl.statisticsdk.agent.StatisticsAgent.onResume(getApplicationContext());
+        com.tcl.statisticsdk.agent.StatisticsAgent.onResume(this);
 
         mLoadFile = new Thread() {
             @Override
@@ -86,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onPause() {
         super.onPause();
         // 页面onPause
-        com.tcl.statisticsdk.agent.StatisticsAgent.onPause(getApplicationContext());
+        com.tcl.statisticsdk.agent.StatisticsAgent.onPause(this);
 
         if (mLoadFile != null && mLoadFile.isAlive()) {
             mLoadFile.stop();
@@ -110,15 +112,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent.setClass(this, ActivityTwo.class);
                 startActivity(intent);
                 break;
-            //模拟异常
+            // 模拟异常
             case R.id.btn_test_error:
                 errorOccurs();
                 break;
-            //模拟带参数的事件
+            // 模拟带参数的事件
             case R.id.btn_click_event_params:
                 eventParams();
                 break;
-            //模以跳转Fragment
+            // 模以跳转Fragment
+            case R.id.btn_switch_fragment_page:
+                forwardToFragment();
+                break;
+            default:
+
         }
     }
 
@@ -199,10 +206,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private void forwardToFragment(){
 
+    private void forwardToFragment() {
 
-
+        Intent intent = new Intent();
+        intent.setClass(getApplicationContext(), FragmentTest.class);
+        startActivity(intent);
     }
 
 }

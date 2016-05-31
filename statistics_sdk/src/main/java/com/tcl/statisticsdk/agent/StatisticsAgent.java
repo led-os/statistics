@@ -15,7 +15,9 @@ import java.util.Map;
 //import com.orhanobut.logger.Logger;
 
 public class StatisticsAgent {
+
     private static boolean mInitCatchException = false;
+
 
     static {
         mInitCatchException = false;
