@@ -15,6 +15,7 @@ import com.tcl.statisticsdk.bean.StatisticsResult;
 import com.tcl.statisticsdk.net.StatisticsApi;
 import com.tcl.statisticsdk.systeminfo.DeviceBasicInfo;
 import com.tcl.statisticsdk.util.CrashHandler;
+import com.tcl.statisticsdk.util.DateUtils;
 import com.tcl.statisticsdk.util.DeviceUtils;
 import com.tcl.statisticsdk.util.FileSerializableUtils;
 import com.tcl.statisticsdk.util.LogUtils;
@@ -87,6 +88,9 @@ public class StatisticsHandler {
     private static final int DATA_MAX_SIZE = 300 * 1024;
     private boolean isSendLog = false;
     private boolean isResume = false;
+
+    //记录发送日志的文本，只有在调试模式时才会初始化
+    private StringBuffer mLog ;
 
 
 
@@ -530,9 +534,35 @@ public class StatisticsHandler {
         // 联网上报成功，清空上报内容
         sendResult = StatisticsApi.sendLog(mContext, reportData.toString(), 30 * 1000, 30 * 1000);
 
+        recordLogToMem(sendResult,reportData.toString().length());
+
         LogUtils.D("上报结果:" + sendResult);
 
         return sendResult;
+    }
+
+    private void recordLogToMem(boolean result,int length ){
+
+        if(LogUtils.mDebug){
+            mLog = mLog == null ? new StringBuffer() : mLog;
+        }
+
+        if(result){
+            mLog.append("\n");
+            mLog.append("time:");
+            mLog.append(DateUtils.getCurrentTime());
+            mLog.append(":\t");
+            mLog.append("Length:\t");
+            mLog.append(length);
+        }
+    }
+
+    public String getCurrentLog(){
+        if(mLog == null){
+            return "";
+        }
+        String result =  mLog.toString();
+        return result;
     }
 
     private void sendLog() {

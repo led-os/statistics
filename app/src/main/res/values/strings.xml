@@ -15,11 +15,21 @@
        当前存储在文件里面的内容!
     </string>
 
+     <string name="content_history">
+       上传的日志记录
+    </string>
+
+
     <string name="clean">清空操作日志</string>
 
     <string name="fragment_1">fragment_1</string>
     <string name="fragment_2">fragment_2</string>
     <string name="fragment_3">fragment_3</string>
+
+    <string name="check_log">日志记录</string>
+
+    <string name="time">time:</string>
+    <string name="length">length:</string>
 
 
 </resources>

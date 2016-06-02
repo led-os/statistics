@@ -10,9 +10,9 @@ import com.tcl.statisticsdk.util.LogUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-//import com.orhanobut.logger.Logger;
+// import com.orhanobut.logger.Logger;
 
-//import com.orhanobut.logger.Logger;
+// import com.orhanobut.logger.Logger;
 
 public class StatisticsAgent {
 
@@ -21,7 +21,7 @@ public class StatisticsAgent {
 
     static {
         mInitCatchException = false;
-//        Logger.init("tyler.tang");
+        // Logger.init("tyler.tang");
     }
 
     public static synchronized void onResume(Context context) {
@@ -29,7 +29,7 @@ public class StatisticsAgent {
             LogUtils.D("onResume-- context is null");
             return;
         }
-        //init(context);
+        // init(context);
         StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_RESUME, context);
     }
 
@@ -98,14 +98,15 @@ public class StatisticsAgent {
     }
 
     public static void init(Context context) {
-//        initExceptionCatcher(context);
+        // initExceptionCatcher(context);
     }
 
     private static void initExceptionCatcher(Context context) {
         synchronized (StatisticsAgent.class) {
             if (!(mInitCatchException)) {
-//                Logger.d("发送始化异常捕获器的");
-//                StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_CATCH_EXCEPTION, context);
+                // Logger.d("发送始化异常捕获器的");
+                // StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_ON_CATCH_EXCEPTION,
+                // context);
                 mInitCatchException = true;
             }
         }
@@ -130,4 +131,17 @@ public class StatisticsAgent {
     public static synchronized void sendLog() {
         StatisticsHandler.getInstance().sendMessage(StatisticsHandler.WHAT_SEND_LOG);
     }
+
+    /**
+     * 用来在客户端测试，上传的时间，数据长度， 能得到数据的生命周期和程序一样。
+     * 
+     * @return String
+     */
+    public static String getCurrentUploadLog() {
+        if(!LogUtils.mDebug){
+            return "open debug configuration!";
+        }
+        return StatisticsHandler.getInstance().getCurrentLog();
+    }
+
 }

@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.btn_switch_page).setOnClickListener(this);
         findViewById(R.id.btn_click_event_params).setOnClickListener(this);
         findViewById(R.id.btn_switch_fragment_page).setOnClickListener(this);
+        findViewById(R.id.btn_log).setOnClickListener(this);
 
 
         mText = (EditText) findViewById(R.id.editText);
@@ -123,6 +124,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // 模以跳转Fragment
             case R.id.btn_switch_fragment_page:
                 forwardToFragment();
+                break;
+            case R.id.btn_log:
+
+                forwardToLog();
+
                 break;
             default:
 
@@ -212,6 +218,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent();
         intent.setClass(getApplicationContext(), FragmentTest.class);
         startActivity(intent);
+    }
+
+
+    private void forwardToLog(){
+
+        Intent intent = new Intent();
+        intent.setClass(this, UploadLogActivity.class);
+        startActivity(intent);
+
     }
 
 }

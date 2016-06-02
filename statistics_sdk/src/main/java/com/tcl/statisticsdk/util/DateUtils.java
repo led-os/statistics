@@ -28,7 +28,7 @@ public class DateUtils {
 
     public static String getCurrentTime() {
         String str = null;
-        str = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+        str = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         return str;
     }
 

@@ -92,8 +92,12 @@ public class DeviceBasicInfo {
     private String mAppKey;
     private String mAndroidSDKRelease;
 
+    // 基本信息是否初始化
+    private boolean mInited = false;
 
-    private DeviceBasicInfo() {}
+    private DeviceBasicInfo() {
+        mInited = false;
+    }
 
     public static DeviceBasicInfo getInstance() {
         synchronized (DeviceBasicInfo.class) {
@@ -103,11 +107,14 @@ public class DeviceBasicInfo {
     }
 
     /**
+     *
      * 初始化需要统计的基本信息
      * 
      * @param context 上下文,传兼容的时候注意
      */
     private void init(Context context) {
+
+        LogUtils.D("初始化基本信息");
 
         mContext = context.getApplicationContext();
         this.mSDKVersion = Build.VERSION.SDK;
@@ -140,7 +147,6 @@ public class DeviceBasicInfo {
         mAppKey = DeviceUtils.getAppKey(mContext);
         mAndroidSDKRelease = Build.VERSION.RELEASE;
 
-
         // 序列号
         String serialno = DeviceUtils.getSerialNumber();
         // 合成的唯一编码
@@ -151,6 +157,8 @@ public class DeviceBasicInfo {
             mUUID2 = "000000000000000";
         }
         getPackageInfo(context);
+
+        mInited = true;
     }
 
 
@@ -216,7 +224,9 @@ public class DeviceBasicInfo {
 
     public void setAppinfo(Context context, JSONObject appinfo) {
 
-        init(context);
+        if(!mInited) {
+            init(context);
+        }
 
         if ((!(TextUtils.isEmpty(this.mAppVersionName))) && (this.mAppVersionName.length() > 15))
 

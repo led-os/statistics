@@ -278,8 +278,6 @@ public class DeviceUtils {
         return result;
     }
 
-
-
     /**
      * getMAc
      *

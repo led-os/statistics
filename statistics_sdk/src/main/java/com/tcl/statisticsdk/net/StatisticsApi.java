@@ -43,7 +43,6 @@ public class StatisticsApi {
     // 服务器URL for china
     // private final static String SERVER_URL_CHINA = "http://gw.csp.cn.tclclouds.com/api/log";
 
-
     private final static String SERVER_URL_CHINA = "http://gw.csp.cn.tclclouds.com/api/log";
     // 服务器URL for global
     private final static String SERVER_URL_GLOBAL = "https://gstest.udc.cn.tclclouds.com/api/device/log";
